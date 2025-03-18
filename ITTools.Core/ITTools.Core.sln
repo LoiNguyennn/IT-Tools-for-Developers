@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReverseStringPlugin", "Reve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UppercasePlugin", "UppercasePlugin\UppercasePlugin.csproj", "{B2DE193E-6DFC-447F-A566-13F5096B0656}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordCounter", "WordCounter\WordCounter.csproj", "{5A726C0A-BF1C-45A6-BC36-673EFDAD63F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B2DE193E-6DFC-447F-A566-13F5096B0656}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2DE193E-6DFC-447F-A566-13F5096B0656}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2DE193E-6DFC-447F-A566-13F5096B0656}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A726C0A-BF1C-45A6-BC36-673EFDAD63F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A726C0A-BF1C-45A6-BC36-673EFDAD63F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A726C0A-BF1C-45A6-BC36-673EFDAD63F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A726C0A-BF1C-45A6-BC36-673EFDAD63F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
