@@ -1,4 +1,4 @@
-namespace ITTools.Core.Models
+﻿namespace ITTools.Core.Models
 {
     public class ErrorViewModel
     {
