@@ -1,0 +1,12 @@
+﻿@model IEnumerable<ITTools.Core.Models.ITool>
+@{
+    ViewData["Title"] = "Tools";
+}
+
+<h1>Available Tools</h1>
+<ul>
+    @foreach (var tool in Model)
+    {
+        <li>@tool.Name - @tool.Description (Category: @tool.Category)</li>
+    }
+</ul>

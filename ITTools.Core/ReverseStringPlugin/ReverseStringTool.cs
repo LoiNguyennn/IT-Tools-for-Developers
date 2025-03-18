@@ -8,6 +8,8 @@ namespace ReverseStringPlugin
         public string Name => "Reverse String";
         public string Description => "Reverses a given string.";
 
+        public string Category => "String Tools";
+
         public string Execute(string input)
         {
             char[] charArray = input.ToCharArray();
