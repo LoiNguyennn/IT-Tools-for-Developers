@@ -1,9 +1,8 @@
 ﻿using ITTools.Core.Models;
-using System;
 
-namespace ReverseStringPlugin
+namespace StringProcessing
 {
-    public class ReverseStringTool : ITool
+    public class ReverseString : ITool
     {
         public string Name => "Reverse String";
         public string Description => "Reverses a given string.";

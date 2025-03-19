@@ -1,9 +1,13 @@
 ﻿using ITTools.Core.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace UppercasePlugin
+namespace StringProcessing
 {
-    public class UppercaseTool : ITool
+    public class Uppercase : ITool
     {
         public string Name => "Uppercase Converter";
         public string Description => "Converts a given string to uppercase.";

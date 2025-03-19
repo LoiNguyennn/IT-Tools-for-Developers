@@ -1,9 +1,14 @@
 ﻿using ITTools.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
-namespace UrlEncoder
+namespace Utility
 {
-    public class UrlEncoderTool : ITool
+    public class UrlEncoder : ITool
     {
         public string Name => "URL Encoder";
         public string Description => "Encodes a URL string";
