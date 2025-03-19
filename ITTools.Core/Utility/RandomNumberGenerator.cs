@@ -1,8 +1,8 @@
 ﻿using ITTools.Core.Models;
 
-namespace RandomNumberGenerator
+namespace Utility
 {
-    public class RandomNumberGeneratorTool : ITool
+    public class RandomNumberGenerator : ITool
     {
         private readonly Random _random = new Random();
 
