@@ -1,0 +1,13 @@
+﻿.list-group-item {
+    margin-bottom: 10px;
+}
+
+#result {
+    background-color: #f8f9fa;
+    min-height: 100px;
+    word-wrap: break-word;
+}
+
+.select-tool {
+    float: right;
+}
