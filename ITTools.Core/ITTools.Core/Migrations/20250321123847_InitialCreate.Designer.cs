@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITTools.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250318133925_InitialCreate")]
+    [Migration("20250321123847_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -302,8 +302,7 @@ namespace ITTools.Core.Migrations
                     b.HasOne("ITTools.Core.Models.Category", "Category")
                         .WithMany("Tools")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Category");
                 });

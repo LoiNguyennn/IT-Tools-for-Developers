@@ -12,21 +12,32 @@ namespace ITTools.Core.Controllers
             _toolService = toolService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var tools = _toolService.GetTools();
+            var tools = await _toolService.GetAllToolsAsync();
             return View(tools);
         }
 
         [HttpPost]
-        public IActionResult Execute(string toolName, string input)
+        public async Task<IActionResult> Execute(string toolName, string input)
         {
-            var tool = _toolService.GetTools().FirstOrDefault(t => t.Name == toolName);
-            if (tool == null)
+            // Try to find the tool in plugin instances
+            var pluginTool = _toolService.GetTools().FirstOrDefault(t => t.Name == toolName);
+            if (pluginTool != null)
+            {
+                var result = pluginTool.Execute(input);
+                return Json(new { result });
+            }
+
+            // If not found in plugins, check database for existence
+            var tools = await _toolService.GetAllToolsAsync();
+            var dbTool = tools.FirstOrDefault(t => t.Name == toolName);
+
+            if (dbTool == null)
                 return NotFound();
 
-            var result = tool.Execute(input);
-            return Json(new { result });
+            // Return a message for non-executable tools
+            return Json(new { result = $"Tool '{toolName}' is not executable (no plugin available)." });
         }
     }
 }

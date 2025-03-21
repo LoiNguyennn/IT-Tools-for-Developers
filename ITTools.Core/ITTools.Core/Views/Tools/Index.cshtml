@@ -1,6 +1,7 @@
-﻿@model IEnumerable<ITTools.Core.Models.ITool>
+﻿@model IEnumerable<ITTools.Core.Models.Tool>
 @{
     ViewData["Title"] = "Tools";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Tool Testing Interface</h1>
@@ -17,11 +18,21 @@
                     <li class="list-group-item">
                         <strong>@tool.Name</strong>
                         <br />@tool.Description
-                        <br /><small>Category: @tool.Category</small>
-                        <button class="btn btn-sm btn-primary mt-2 select-tool"
-                                data-tool="@tool.Name">
-                            Test Tool
-                        </button>
+                        <br /><small>Category: @(tool.Category?.Name ?? "Uncategorized")</small>
+                        <br /><small>Status: @(tool.IsEnabled ? "Enabled" : "Disabled") - @(tool.IsPremium ? "Premium" : "Basic")</small>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-primary select-tool"
+                                    data-tool="@tool.Name">
+                                Test Tool
+                            </button>
+							@if (User.IsInRole("Admin"))
+							{
+                                <a asp-controller="Admin" asp-action="EditTool" asp-route-id="@tool.Id"
+                                   class="btn btn-sm btn-warning ml-2">
+                                    Edit
+                                </a>
+							}
+                        </div>
                     </li>
                 }
             </ul>
@@ -33,7 +44,7 @@
                 <div class="form-group">
                     <label for="toolName">Selected Tool:</label>
                     <input type="text" class="form-control" id="toolName"
-                           name="toolName" readonly>
+                           name="toolName" readonly />
                 </div>
                 <div class="form-group">
                     <label for="input">Input:</label>
@@ -53,16 +64,16 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Handle tool selection
-            $('.select-tool').click(function() {
+            $('.select-tool').click(function () {
                 const toolName = $(this).data('tool');
                 $('#toolName').val(toolName);
                 $('#result').text('');
             });
 
             // Handle form submission
-            $('#toolForm').submit(function(e) {
+            $('#toolForm').submit(function (e) {
                 e.preventDefault();
 
                 const toolName = $('#toolName').val();
@@ -74,17 +85,17 @@
                 }
 
                 $.ajax({
-                    url: '@Url.Action("Execute")',
+                    url: '@Url.Action("Execute", "Tools")',
                     type: 'POST',
                     data: {
                         toolName: toolName,
                         input: input
                     },
-                    success: function(response) {
-                        $('#result').text(JSON.stringify(response.result, null, 2));
+                    success: function (response) {
+                        $('#result').text(response.result);
                     },
-                    error: function(xhr) {
-                        $('#result').text('Error: ' + xhr.responseText);
+                    error: function (xhr) {
+                        $('#result').text('Error: ' + (xhr.responseJSON?.result || xhr.statusText));
                     }
                 });
             });

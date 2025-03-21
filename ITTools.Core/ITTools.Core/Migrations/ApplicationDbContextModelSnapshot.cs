@@ -299,8 +299,7 @@ namespace ITTools.Core.Migrations
                     b.HasOne("ITTools.Core.Models.Category", "Category")
                         .WithMany("Tools")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Category");
                 });
