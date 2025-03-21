@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.IO;
 using System.Runtime.Loader;
+using System.Linq;
 
 namespace ITTools.Services
 {
@@ -31,7 +32,9 @@ namespace ITTools.Services
         private void LoadPlugins()
         {
             var newPluginInstances = new List<ITool>();
+            var loadedToolNames = new HashSet<string>();
 
+            // Tải tất cả các plugin từ thư mục Plugins
             foreach (var file in Directory.GetFiles(_pluginPath, "*.dll"))
             {
                 try
@@ -49,6 +52,7 @@ namespace ITTools.Services
                         {
                             Console.WriteLine($"✅ Loaded tool: {tool.Name}");
                             newPluginInstances.Add(tool);
+                            loadedToolNames.Add(tool.Name); // Theo dõi tên công cụ đã tải
                             SyncToolWithDatabase(tool);
                         }
                     }
@@ -59,6 +63,22 @@ namespace ITTools.Services
                 }
             }
 
+            // Xóa các công cụ trong database không còn tương ứng với plugin
+            var toolsToRemove = _context.Tools
+                .Where(t => !loadedToolNames.Contains(t.Name))
+                .ToList();
+
+            if (toolsToRemove.Any())
+            {
+                _context.Tools.RemoveRange(toolsToRemove);
+                _context.SaveChanges();
+                foreach (var tool in toolsToRemove)
+                {
+                    Console.WriteLine($"🗑️ Removed tool from database: {tool.Name}");
+                }
+            }
+
+            // Cập nhật danh sách plugin trong bộ nhớ
             lock (_pluginInstances)
             {
                 _pluginInstances.Clear();
@@ -88,7 +108,7 @@ namespace ITTools.Services
                     Name = tool.Name,
                     Description = tool.Description,
                     IsEnabled = true,
-                    IsPremium = false, // Default value, can be changed by admin
+                    IsPremium = false,
                     CategoryId = category.Id
                 });
                 _context.SaveChanges();
@@ -106,6 +126,34 @@ namespace ITTools.Services
             watcher.Changed += (s, e) => Task.Run(() => { Thread.Sleep(1000); LoadPlugins(); });
             watcher.Created += (s, e) => Task.Run(() => { Thread.Sleep(1000); LoadPlugins(); });
             watcher.Deleted += (s, e) => Task.Run(() => { Thread.Sleep(1000); LoadPlugins(); });
+        }
+
+        public async Task<List<Tool>> GetAllToolsAsync()
+        {
+            return await _context.Tools.ToListAsync();
+        }
+
+        public async Task<Tool?> GetToolByIdAsync(int id)
+        {
+            return await _context.Tools
+                .Include(t => t.Category) // Include Category for display
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<List<Category>> GetCategoriesAsync()
+        {
+            return await _context.Categories.ToListAsync();
+        }
+
+        public async Task UpdateToolAsync(Tool tool)
+        {
+            _context.Update(tool);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ToolExistsAsync(int id)
+        {
+            return await _context.Tools.AnyAsync(t => t.Id == id);
         }
     }
 }
