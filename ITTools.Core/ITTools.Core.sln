@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageVideoTools", "ImageVid
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConversionTools", "ConversionTools\ConversionTools.csproj", "{DB781A16-5C49-4C16-A4D9-0C10D7F7E70A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncodingTools", "EncodingTools\EncodingTools.csproj", "{FE7F7992-2987-44F3-8429-3F334174043C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{DB781A16-5C49-4C16-A4D9-0C10D7F7E70A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB781A16-5C49-4C16-A4D9-0C10D7F7E70A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB781A16-5C49-4C16-A4D9-0C10D7F7E70A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE7F7992-2987-44F3-8429-3F334174043C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE7F7992-2987-44F3-8429-3F334174043C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE7F7992-2987-44F3-8429-3F334174043C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE7F7992-2987-44F3-8429-3F334174043C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
