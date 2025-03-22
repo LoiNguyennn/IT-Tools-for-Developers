@@ -1,0 +1,126 @@
+﻿
+:root {
+    --primary-color: #ADB2D4;
+    --secondary-color: #C7D9DD;
+    --accent-color: #D5E5D5;
+    --background-color: #EEF1DA;
+}
+
+body {
+    background-color: var(--background-color);
+}
+
+.login-container {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+    .login-header h2 {
+        font-weight: 600;
+        margin-bottom: 10px;
+        position: relative;
+        display: inline-block;
+    }
+
+        .login-header h2:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 15px;
+    height: auto;
+    transition: all 0.3s;
+}
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(173, 178, 212, 0.25);
+    }
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+    .btn-primary:hover {
+        background-color: #9CA1C2;
+        transform: translateY(-2px);
+    }
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s;
+}
+
+    .btn-secondary:hover {
+        background-color: #B6C8CC;
+    }
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-message {
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    background-color: rgba(255, 0, 0, 0.1);
+    border-left: 4px solid #ff0000;
+}
+
+.link-section {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+    .link-section a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .link-section a:hover {
+            color: #9CA1C2;
+            text-decoration: underline;
+        }
