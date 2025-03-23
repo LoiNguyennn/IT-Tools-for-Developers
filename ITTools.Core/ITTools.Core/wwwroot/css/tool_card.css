@@ -1,0 +1,32 @@
+.card {
+    border: 2px solid lightgray;
+    /*width: 18rem;*/
+    transition: border-color 0.15s ease-in-out;
+}
+
+.card:hover {
+    cursor: pointer;
+    border-color: #4f959d; /* Changes border color smoothly */
+}
+
+.tool-icon {
+    height: 40px;
+}
+
+.favorite-icon {
+    height: 16px;
+    fill: currentColor;
+}
+
+.favorite-icon-container {
+    display: grid;
+    place-items: center; /* Centers the icon both horizontally & vertically */
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.favorite-icon-container:hover {
+    background: rgba(255, 0, 0, 0.2);
+}
