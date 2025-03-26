@@ -1,0 +1,62 @@
+﻿@model ITTools.Core.Models.Tool
+
+@{
+    bool hasPlugin = ViewBag.HasPlugin;
+}
+
+<div class="tool-details-card csv-row-counter-card">
+    <div class="csv-header">
+        <h2 class="csv-title">@Model.Name</h2>
+        <span class="csv-subtitle">File Processing Utility</span>
+    </div>
+    <dl class="row csv-details">
+        <dt class="col-sm-4">Name</dt>
+        <dd class="col-sm-8">@Model.Name</dd>
+
+        <dt class="col-sm-4">Description</dt>
+        <dd class="col-sm-8">@Model.Description</dd>
+
+        <dt class="col-sm-4">Category</dt>
+        <dd class="col-sm-8">@Model.Category?.Name</dd>
+
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8">
+            @if (Model.IsEnabled)
+            {
+                <span class="badge badge-enabled">Enabled</span>
+            }
+            else
+            {
+                <span class="badge badge-disabled">Disabled</span>
+            }
+        </dd>
+
+        <dt class="col-sm-4">Type</dt>
+        <dd class="col-sm-8">
+            @if (hasPlugin)
+            {
+                <span class="badge badge-executable">Executable</span>
+            }
+            else
+            {
+                <span class="badge badge-info">Information Only</span>
+            }
+        </dd>
+    </dl>
+
+    @if (hasPlugin)
+    {
+        <div class="csv-try-it-out mt-4">
+            <h4>Try It Out</h4>
+            <p class="csv-instruction">Upload a CSV string or file to count rows:</p>
+            <div class="input-group mb-3">
+                <textarea class="form-control csv-input" id="toolInput" placeholder="Paste CSV content here"></textarea>
+                <button class="btn btn-primary csv-execute-btn" type="button" id="executeButton">Count Rows</button>
+            </div>
+            <div class="result-section mt-2">
+                <h5>Row Count:</h5>
+                <pre id="resultOutput" class="csv-result"></pre>
+            </div>
+        </div>
+    }
+</div>

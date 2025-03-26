@@ -1,5 +1,4 @@
-﻿
-:root {
+﻿:root {
     --primary-color: #ADB2D4;
     --secondary-color: #C7D9DD;
     --accent-color: #D5E5D5;
@@ -167,19 +166,6 @@ body {
     background: linear-gradient(to right, #ff4d4d, #ffb84d, #52c41a);
     transition: width 0.3s ease;
 }
-
-.password-toggle {
-    position: absolute;
-    right: 15px;
-    top: 15px; /* Changed from 50px to 15px to align with the input */
-    color: #adb5bd;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-    .password-toggle:hover {
-        color: var(--primary-color);
-    }
 
 /* Adding decorative elements */
 .decoration {

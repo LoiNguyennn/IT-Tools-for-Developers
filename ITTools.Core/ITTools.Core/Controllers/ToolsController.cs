@@ -16,6 +16,22 @@ namespace ITTools.Core.Controllers
         {
             var tools = await _toolService.GetAllToolsAsync();
             return View(tools);
+
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var tool = await _toolService.GetToolByIdAsync(id);
+            if (tool == null)
+            {
+                return NotFound();
+            }
+
+            // Check if the tool has a plugin implementation
+            var pluginTool = _toolService.GetTools().FirstOrDefault(t => t.Name == tool.Name);
+            ViewBag.HasPlugin = pluginTool != null;
+
+            return View(tool);
         }
 
         [HttpPost]
