@@ -1,22 +1,24 @@
 ﻿using ITTools.Core.Models;
 using ITTools.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection; // Add this for IServiceScopeFactory
 using System.Reflection;
 using System.IO;
 using System.Runtime.Loader;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ITTools.Services
 {
     public class ToolService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceScopeFactory _scopeFactory; // Replace ApplicationDbContext with scope factory
         private readonly List<ITool> _pluginInstances;
         private readonly string _pluginPath;
 
-        public ToolService(ApplicationDbContext context)
+        public ToolService(IServiceScopeFactory scopeFactory)
         {
-            _context = context;
+            _scopeFactory = scopeFactory; // Inject scope factory instead of DbContext
             _pluginInstances = new List<ITool>();
             _pluginPath = Path.Combine(Directory.GetCurrentDirectory(), "Plugins");
 
@@ -34,7 +36,7 @@ namespace ITTools.Services
             var newPluginInstances = new List<ITool>();
             var loadedToolNames = new HashSet<string>();
 
-            // Tải tất cả các plugin từ thư mục Plugins
+            // Load all plugins from the Plugins directory
             foreach (var file in Directory.GetFiles(_pluginPath, "*.dll"))
             {
                 try
@@ -52,8 +54,8 @@ namespace ITTools.Services
                         {
                             Console.WriteLine($"✅ Loaded tool: {tool.Name}");
                             newPluginInstances.Add(tool);
-                            loadedToolNames.Add(tool.Name); // Theo dõi tên công cụ đã tải
-                            SyncToolWithDatabase(tool);
+                            loadedToolNames.Add(tool.Name);
+                            SyncToolWithDatabase(tool); // This will now use a scoped context
                         }
                     }
                 }
@@ -63,22 +65,26 @@ namespace ITTools.Services
                 }
             }
 
-            // Xóa các công cụ trong database không còn tương ứng với plugin
-            var toolsToRemove = _context.Tools
-                .Where(t => !loadedToolNames.Contains(t.Name))
-                .ToList();
-
-            if (toolsToRemove.Any())
+            // Use a scope to clean up tools from the database
+            using (var scope = _scopeFactory.CreateScope())
             {
-                _context.Tools.RemoveRange(toolsToRemove);
-                _context.SaveChanges();
-                foreach (var tool in toolsToRemove)
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var toolsToRemove = dbContext.Tools
+                    .Where(t => !loadedToolNames.Contains(t.Name))
+                    .ToList();
+
+                if (toolsToRemove.Any())
                 {
-                    Console.WriteLine($"🗑️ Removed tool from database: {tool.Name}");
+                    dbContext.Tools.RemoveRange(toolsToRemove);
+                    dbContext.SaveChanges();
+                    foreach (var tool in toolsToRemove)
+                    {
+                        Console.WriteLine($"🗑️ Removed tool from database: {tool.Name}");
+                    }
                 }
             }
 
-            // Cập nhật danh sách plugin trong bộ nhớ
+            // Update the in-memory plugin list
             lock (_pluginInstances)
             {
                 _pluginInstances.Clear();
@@ -88,30 +94,36 @@ namespace ITTools.Services
 
         private void SyncToolWithDatabase(ITool tool)
         {
-            var category = _context.Categories
-                .FirstOrDefault(c => c.Name == tool.Category);
-
-            if (category == null)
+            // Create a new scope for database operations
+            using (var scope = _scopeFactory.CreateScope())
             {
-                category = new Category { Name = tool.Category };
-                _context.Categories.Add(category);
-                _context.SaveChanges();
-            }
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            var existingTool = _context.Tools
-                .FirstOrDefault(t => t.Name == tool.Name);
+                var category = dbContext.Categories
+                    .FirstOrDefault(c => c.Name == tool.Category);
 
-            if (existingTool == null)
-            {
-                _context.Tools.Add(new Tool
+                if (category == null)
                 {
-                    Name = tool.Name,
-                    Description = tool.Description,
-                    IsEnabled = true,
-                    IsPremium = false,
-                    CategoryId = category.Id
-                });
-                _context.SaveChanges();
+                    category = new Category { Name = tool.Category };
+                    dbContext.Categories.Add(category);
+                    dbContext.SaveChanges();
+                }
+
+                var existingTool = dbContext.Tools
+                    .FirstOrDefault(t => t.Name == tool.Name);
+
+                if (existingTool == null)
+                {
+                    dbContext.Tools.Add(new Tool
+                    {
+                        Name = tool.Name,
+                        Description = tool.Description,
+                        IsEnabled = true,
+                        IsPremium = false,
+                        CategoryId = category.Id
+                    });
+                    dbContext.SaveChanges();
+                }
             }
         }
 
@@ -130,30 +142,50 @@ namespace ITTools.Services
 
         public async Task<List<Tool>> GetAllToolsAsync()
         {
-            return await _context.Tools.ToListAsync();
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                return await dbContext.Tools.ToListAsync();
+            }
         }
 
         public async Task<Tool?> GetToolByIdAsync(int id)
         {
-            return await _context.Tools
-                .Include(t => t.Category) // Include Category for display
-                .FirstOrDefaultAsync(t => t.Id == id);
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                return await dbContext.Tools
+                    .Include(t => t.Category)
+                    .FirstOrDefaultAsync(t => t.Id == id);
+            }
         }
 
         public async Task<List<Category>> GetCategoriesAsync()
         {
-            return await _context.Categories.ToListAsync();
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                return await dbContext.Categories.ToListAsync();
+            }
         }
 
         public async Task UpdateToolAsync(Tool tool)
         {
-            _context.Update(tool);
-            await _context.SaveChangesAsync();
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Update(tool);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<bool> ToolExistsAsync(int id)
         {
-            return await _context.Tools.AnyAsync(t => t.Id == id);
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                return await dbContext.Tools.AnyAsync(t => t.Id == id);
+            }
         }
     }
 }
