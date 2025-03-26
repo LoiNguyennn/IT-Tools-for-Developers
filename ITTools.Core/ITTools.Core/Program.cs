@@ -10,15 +10,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register ApplicationDbContext with scoped lifetime (default for EF Core)
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<ToolService>(); // Register the service
+// Register ToolService as aavera
+
+builder.Services.AddSingleton<ToolService>(); // Changed from AddScoped to AddSingleton
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// Seed roles and admin user
 async Task SeedRolesAndAdmin(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -51,7 +55,7 @@ async Task SeedRolesAndAdmin(IServiceProvider serviceProvider)
     }
 }
 
-// After app.Build()
+// Seed the database after app is built
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
