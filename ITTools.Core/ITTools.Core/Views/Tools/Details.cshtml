@@ -6,7 +6,7 @@
     // Create a CSS-friendly class name
     string toolClass = Model.Name.ToLower().Replace(" ", "-");
     // Determine the partial view name
-    string partialViewName = $"Partials/_{Model.Name.Replace(" ", "")}";
+    string partialViewName = $"~/Views/Partials/_{Model.Name.Replace(" ", "")}.cshtml";
 }
 
 <link rel="stylesheet" href="~/css/details.css" />
@@ -91,6 +91,7 @@
 
             function executeTool() {
                 const input = $toolInput.val();
+                
                 const toolName = '@Model.Name';
 
                 $executeButton.prop('disabled', true);

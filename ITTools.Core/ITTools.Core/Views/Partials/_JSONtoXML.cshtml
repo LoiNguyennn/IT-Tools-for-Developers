@@ -50,25 +50,25 @@
             <h4>Try It Out</h4>
             <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons">
                 <label class="btn btn-primary active">
-                    <input type="radio" name="options" id="option1" autocomplete="off" checked> Upload CSV
+                    <input type="radio" name="options" id="option1" autocomplete="off" checked> Upload JSON
                 </label>
                 <label class="btn btn-primary">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> Paste CSV
+                    <input type="radio" name="options" id="option2" autocomplete="off"> Paste JSON
                 </label>
             </div>
 
             <div id="pasteCsvInput" class="input-group mb-3 d-none">
-                <textarea rows="6" class="form-control csv-input" id="toolInput" placeholder="Paste CSV content here"></textarea>
-                <button class="btn btn-primary csv-execute-btn" type="button" id="executeButton">Count Rows</button>
+                <textarea rows="6" class="form-control csv-input" id="toolInput" placeholder="Paste JSON here"></textarea>
+                <button class="btn btn-primary csv-execute-btn" type="button" id="executeButton">Convert to XML</button>
             </div>
             
             <div id="uploadForm" class="input-group mb-3">
-                <input id="csvFile" type="file" class="form-control" name="csvFile" accept=".csv" required>
-                <button class="btn btn-primary csv-execute-btn" type="button" id="executeCSVUpload">Count Rows</button>
+                <input id="csvFile" type="file" class="form-control" name="csvFile" accept=".json" required>
+                <button class="btn btn-primary csv-execute-btn" type="button" id="executeCSVUpload">Convert to XML</button>
             </div>
             
             <div class="result-section mt-2">
-                <h5>Row Count:</h5>
+                <h5>Result:</h5>
                 <pre id="resultOutput" class="csv-result"></pre>
             </div>
         </div>
