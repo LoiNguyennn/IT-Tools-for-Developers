@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.Loader;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ITTools.Services
 {
@@ -26,13 +27,13 @@ namespace ITTools.Services
                 Directory.CreateDirectory(_pluginPath);
 
             LoadPlugins();
-            SetupFileWatcher();
         }
 
         public IReadOnlyList<ITool> GetTools() => _pluginInstances.AsReadOnly();
 
-        private void LoadPlugins()
+        public void LoadPlugins()
         {
+            Debug.WriteLine("Loading plugins...");
             var newPluginInstances = new List<ITool>();
             var loadedToolNames = new HashSet<string>();
 
@@ -127,25 +128,23 @@ namespace ITTools.Services
             }
         }
 
-        private void SetupFileWatcher()
-        {
-            var watcher = new FileSystemWatcher(_pluginPath, "*.dll")
-            {
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
-                EnableRaisingEvents = true
-            };
-
-            watcher.Changed += (s, e) => Task.Run(() => { Thread.Sleep(1000); LoadPlugins(); });
-            watcher.Created += (s, e) => Task.Run(() => { Thread.Sleep(1000); LoadPlugins(); });
-            watcher.Deleted += (s, e) => Task.Run(() => { Thread.Sleep(1000); LoadPlugins(); });
-        }
-
         public async Task<List<Tool>> GetAllToolsAsync()
         {
             using (var scope = _scopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 return await dbContext.Tools.ToListAsync();
+            }
+        }
+
+        public async Task<List<Tool>> GetEnabledToolsAsync()
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                return await dbContext.Tools
+                    .Where(t => t.IsEnabled) // Chỉ lấy các tool có IsEnabled = true
+                    .ToListAsync();
             }
         }
 
@@ -185,6 +184,40 @@ namespace ITTools.Services
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 return await dbContext.Tools.AnyAsync(t => t.Id == id);
+            }
+        }
+
+        public async Task DeleteToolAsync(int id)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var tool = await dbContext.Tools.FindAsync(id);
+
+                if (tool != null)
+                {
+                    // Delete from database
+                    dbContext.Tools.Remove(tool);
+                    await dbContext.SaveChangesAsync();
+
+                    // Delete the DLL file
+                    string dllFileName = tool.Name.Replace(" ", "") + ".dll";
+                    string dllFilePath = Path.Combine(_pluginPath, dllFileName);
+
+                    if (File.Exists(dllFilePath))
+                    {
+                        try
+                        {
+                            File.Delete(dllFilePath);
+                            Console.WriteLine($"🗑️ Deleted tool DLL: {dllFilePath}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"❌ Failed to delete tool DLL {dllFilePath}: {ex.Message}");
+                            throw;
+                        }
+                    }
+                }
             }
         }
     }

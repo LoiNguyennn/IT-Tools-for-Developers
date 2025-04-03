@@ -1,4 +1,5 @@
 ﻿using ITTools.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITTools.Core.Controllers
@@ -14,7 +15,11 @@ namespace ITTools.Core.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var tools = await _toolService.GetAllToolsAsync();
+            if (User.IsInRole("Admin"))
+            {
+                return View(await _toolService.GetAllToolsAsync());
+            }
+            var tools = await _toolService.GetEnabledToolsAsync();
             return View(tools);
 
         }
@@ -27,7 +32,6 @@ namespace ITTools.Core.Controllers
                 return NotFound();
             }
 
-            // Check if the tool has a plugin implementation
             var pluginTool = _toolService.GetTools().FirstOrDefault(t => t.Name == tool.Name);
             ViewBag.HasPlugin = pluginTool != null;
 
@@ -37,7 +41,6 @@ namespace ITTools.Core.Controllers
         [HttpPost]
         public async Task<IActionResult> Execute(string toolName, string input)
         {
-            // Try to find the tool in plugin instances
             var pluginTool = _toolService.GetTools().FirstOrDefault(t => t.Name == toolName);
             if (pluginTool != null)
             {
@@ -45,15 +48,16 @@ namespace ITTools.Core.Controllers
                 return Json(new { result });
             }
 
-            // If not found in plugins, check database for existence
             var tools = await _toolService.GetAllToolsAsync();
             var dbTool = tools.FirstOrDefault(t => t.Name == toolName);
 
             if (dbTool == null)
                 return NotFound();
 
-            // Return a message for non-executable tools
             return Json(new { result = $"Tool '{toolName}' is not executable (no plugin available)." });
         }
+
+
+       
     }
 }
