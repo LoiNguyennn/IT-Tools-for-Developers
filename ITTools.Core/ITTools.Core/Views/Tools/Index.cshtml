@@ -3,11 +3,9 @@
     ViewData["Title"] = "Tools";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <link rel="stylesheet" href="~/css/tools.css" />
-<link rel="stylesheet" href="~/css/tool_card.css"/>
+<link rel="stylesheet" href="~/css/tool_card.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 <div class="container">
     <div class="row">
         <div class="input-group rounded mb-4">
@@ -16,127 +14,26 @@
                 <i class="fas fa-search"></i>
             </span>
         </div>
-        @foreach (var tool in Model)
+
+        @if (User.IsInRole("Admin"))
         {
-            <div class="col-md-4 mb-4"> <!-- Adjust column size as needed -->
-                <partial name="_ToolCardPartial" model="tool"/>
+            <div class="mb-3">
+                <a asp-action="AddTool" asp-controller="Admin" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Tool
+                </a>
             </div>
         }
-        @*<div class="col-md-6">
-            <h2>Available Tools</h2>
-            <ul class="list-group">
-                @foreach (var tool in Model)
-                {
-                    <li class="list-group-item">
-                        <strong>@tool.Name</strong>
-                        <br />@tool.Description
-                        <br /><small>Category: @(tool.Category?.Name ?? "Uncategorized")</small>
-                        <br /><small>Status: @(tool.IsEnabled ? "Enabled" : "Disabled") - @(tool.IsPremium ? "Premium" : "Basic")</small>
-                        <div class="mt-2">
-                            <button class="btn btn-sm btn-primary select-tool"
-                                    data-tool="@tool.Name">
-                                Test Tool
-                            </button>
-							@if (User.IsInRole("Admin"))
-							{
-                                <a asp-controller="Admin" asp-action="EditTool" asp-route-id="@tool.Id"
-                                   class="btn btn-sm btn-warning ml-2">
-                                    Edit
-                                </a>
-							}
-                        </div>
-                    </li>
-                }
-            </ul>
-        </div>*@
 
-        @* <div class="col-md-6"> 
-            <h2>Test Area</h2>
-            <form id="toolForm">
-                <div class="form-group">
-                    <label for="toolName">Selected Tool:</label>
-                    <input type="text" class="form-control" id="toolName"
-                           name="toolName" readonly />
+        <div class="row" id="tools-container">
+            @foreach (var tool in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <partial name="_ToolCardPartial" model="tool" />
                 </div>
-                <div class="form-group mt-2">
-                    <label for="input">Input:</label>
-                    <textarea class="form-control" id="input" name="input"
-                              rows="4" placeholder="Enter your input here"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success mt-2">Execute</button>
-            </form>
-
-            <div id="resultArea" class="mt-3">
-                <h3>Result:</h3>
-                <pre id="result" class="border p-3"></pre>
-            </div>
-        </div> *@
+            }
+        </div>
     </div>
 </div>
-
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#search-tools").on("keyup", function () {
-                var keyword = $(this).val().toLowerCase(); // Convert to lowercase for case-insensitive search
-
-                $(".tool-card").each(function () {
-                    var toolName = $(this).find(".card-title").text().toLowerCase(); // Get tool name
-                    var toolDescription = $(this).find(".card-text").text().toLowerCase(); // Get description
-
-                    if (toolName.includes(keyword) || toolDescription.includes(keyword)) {
-                        $(this).closest(".col-md-4").show(); // Show matching tools
-                    } else {
-                        $(this).closest(".col-md-4").hide(); // Hide non-matching tools
-                    }
-                });
-            });
-        });
-        document.addEventListener("DOMContentLoaded", function () {
-            $('[data-toggle="tooltip"]').tooltip();
-            document.querySelectorAll(".favorite-icon-click").forEach(element => {
-                element.addEventListener("click", function (event) {
-                    event.preventDefault(); // Prevents unintended navigation
-                });
-            });
-        });
-        $(document).ready(function () {
-            // Handle tool selection
-            $('.select-tool').click(function () {
-                const toolName = $(this).data('tool');
-                $('#toolName').val(toolName);
-                $('#result').text('');
-            });
-
-            // Handle form submission
-            $('#toolForm').submit(function (e) {
-                e.preventDefault();
-
-                const toolName = $('#toolName').val();
-                const input = $('#input').val();
-
-                if (!toolName) {
-                    alert('Please select a tool first');
-                    return;
-                }
-
-                $.ajax({
-                    url: '@Url.Action("Execute", "Tools")',
-                    type: 'POST',
-                    data: {
-                        toolName: toolName,
-                        input: input
-                    },
-                    success: function (response) {
-                        $('#result').text(response.result);
-                    },
-                    error: function (xhr) {
-                        $('#result').text('Error: ' + (xhr.responseJSON?.result || xhr.statusText));
-                    }
-                });
-            });
-        });
-    
-    
-    </script>
+    <script src="~/js/tools.js"></script>
 }

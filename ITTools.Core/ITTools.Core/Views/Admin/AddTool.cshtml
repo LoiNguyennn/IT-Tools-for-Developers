@@ -1,0 +1,139 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Add New Tool";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Tool</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="AddTool" enctype="multipart/form-data" method="post" id="toolUploadForm">
+                <div class="mb-4">
+                    <label for="dllFile" class="form-label fw-bold">Select DLL File</label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="dllFile" name="dllFile" accept=".dll" required />
+                        <label class="input-group-text" for="dllFile"><i class="fas fa-file-code"></i></label>
+                    </div>
+                    <div class="form-text text-muted">Only .dll files are accepted</div>
+                    @Html.ValidationMessage("dllFile", new { @class = "text-danger" })
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="uploadButton">
+                        <i class="fas fa-upload me-1"></i> Upload Tool
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-check-circle text-success" style="font-size: 48px;"></i>
+                </div>
+                <p class="text-center" id="successMessage">Tool uploaded successfully! It will be available shortly.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="successOkButton">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-exclamation-triangle text-danger" style="font-size: 48px;"></i>
+                </div>
+                <p class="text-center" id="errorMessage">An error occurred while uploading the tool.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Check if there's an error message from ModelState in TempData
+        @if (ViewData.ModelState.ErrorCount > 0)
+        {
+            <text>
+                    showErrorModal('@Html.Raw(string.Join("<br>", ViewData.ModelState.Values
+             .SelectMany(v => v.Errors)
+             .Select(e => e.ErrorMessage)))');
+            </text>
+        }
+
+            // Handle form submission
+            $("#toolUploadForm").on("submit", function(e) {
+                // Prevent the default submission if the file is invalid
+                const fileInput = document.getElementById('dllFile');
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    e.preventDefault();
+                    showErrorModal("Please select a DLL file.");
+                    return false;
+                }
+
+                const fileName = fileInput.files[0].name;
+                if (!fileName.toLowerCase().endsWith('.dll')) {
+                    e.preventDefault();
+                    showErrorModal("Please select a valid DLL file.");
+                    return false;
+                }
+            });
+
+            // Show success modal if there's a success message in TempData
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                    showSuccessModal('@TempData["Success"]');
+            </text>
+        }
+
+            // Function to show success modal
+            function showSuccessModal(message) {
+                $('#successMessage').html(message);
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+
+                // Set up navigation after modal dismissal
+                $('#successOkButton').on('click', function() {
+                    window.location.href = '@Url.Action("Index", "Tools")';
+                });
+            }
+
+            // Function to show error modal
+            function showErrorModal(message) {
+                $('#errorMessage').html(message);
+                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                errorModal.show();
+            }
+        });
+    </script>
+}
