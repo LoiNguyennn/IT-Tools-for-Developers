@@ -56,6 +56,13 @@ namespace ITTools.Controllers
             }
             return View();
         }
+        
+        [HttpGet]
+        public async Task<IActionResult> Detail()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return View(user);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
