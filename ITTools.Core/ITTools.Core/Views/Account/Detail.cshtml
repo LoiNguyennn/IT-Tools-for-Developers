@@ -1,4 +1,4 @@
-@model ITTools.Core.Models.ApplicationUser
+@model ITTools.Core.viewModels.AccountDetailViewModel
 @{
     ViewData["Title"] = "Account Detail";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -73,26 +73,28 @@
                             <div class="card-body">
                                 <div class="text-success mb-4 d-flex flex-row align-items-center gap-1">
                                     Favorite Tools
-                                    <img src="~/assets/star.svg" style="height: 1em; width: auto;" alt="Star icon"/>
+                                    <i class="fa-solid fa-star" style="color: #ffde21;"></i>
                                 </div>
                                 @* Display user's favorite tools *@
-                                <div class="d-flex flex-row align-items-center justify-content-between">
-                                    <p class="mb-1" style="font-size: .88rem;">
-                                        <a class="text-decoration-none" href="https://www.instagram.com/">JSON to XML</a> &#183;
-                                        <span class="fw-light text-secondary" style="font-size: .77rem;">Conversion Tool</span>
-                                    </p>
-                                    <span class="fw-light text-secondary" style="font-size: 0.77rem;">Remove favorite</span>
-                                </div>
+                                @{
+                                    var idx = 0;
+                                }
                                 
-                                <div class="mt-4 d-flex flex-row align-items-center justify-content-between">
-                                    <p class="mb-1" style="font-size: .88rem;">
-                                        <a class="text-decoration-none" href="https://www.instagram.com/">Placeholder Text Generator</a> &#183;
-                                        <span class="fw-light text-secondary" style="font-size: .77rem;">Image/Video Tools</span>
-                                    </p>
-                                    <span class="fw-light text-secondary" style="font-size: 0.77rem;">Remove favorite</span>
-                                </div>
+                                @foreach (var tool in Model.FavoriteTools)
+                                {
+                                    var marginClass = idx > 0 ? "mt-4" : "";
+                                    idx++;  
+                                    
+                                    <div class="@marginClass d-flex flex-row align-items-center justify-content-between">
+                                        <p class="mb-1" style="font-size: .88rem;">
+                                            <a class="text-decoration-none" href="/Tools/Details/@tool.Id">@tool.Name</a> &#183;
+                                            <span class="fw-light text-secondary" style="font-size: .77rem;">@tool.Category.Name</span>
+                                        </p>
+                                        <span href="#" class="remove-favorite fw-light text-secondary" data-tool-id="@tool.Id" style="font-size: 0.77rem; cursor: pointer;">Remove favorite</span>
+                                    </div>
+                                }
                                 <div class="text-center mt-4">
-                                    <a href="/Somewhere-only-we-know" class="text-decoration-none small">View All &darr;</a>
+                                    <a href="/Tools?myTools=true" class="text-decoration-none small">View All &darr;</a>
                                 </div>
                             </div>
                         </div>
@@ -102,3 +104,6 @@
         </div>
     </div>
 </section>
+@section Scripts {
+    <script src="~/js/details.js"></script>
+}

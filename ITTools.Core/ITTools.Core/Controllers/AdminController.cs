@@ -218,7 +218,7 @@ namespace ITTools.Core.Controllers
                 return View();
             }
         }
-        public IActionResult Index()
+        public IActionResult Index(bool myTools = false)
         {
             return View();
         }

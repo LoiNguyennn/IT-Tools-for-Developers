@@ -144,6 +144,7 @@ namespace ITTools.Services
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 return await dbContext.Tools
                     .Where(t => t.IsEnabled) // Chỉ lấy các tool có IsEnabled = true
+                    .Include(t => t.Favorites)
                     .ToListAsync();
             }
         }
