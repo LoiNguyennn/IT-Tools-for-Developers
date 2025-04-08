@@ -80,7 +80,7 @@ namespace ITTools.Controllers
             {
                 User = user!,
                 FavoriteTools = favoriteTools,
-                IsPremium = User.IsInRole("Premium")
+                IsPremium = user!.IsPremium
             };
             return View(viewModel);
         }
@@ -90,6 +90,37 @@ namespace ITTools.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> Upgrade()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || user.IsPremium)
+            {
+                TempData["ShowUpgradeAlert"] = true;
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+       [HttpPost, ActionName("Upgrade")]
+        public async Task<IActionResult> UpgradeUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            user.IsPremium = true;
+            
+            var result = await _userManager.UpdateAsync(user);
+
+            return Json(result.Succeeded
+                ? new { success = true, redirectUrl = Url.Action("Detail", "Account") }
+                : new { success = false, errors = result.Errors.Select(e => e.Description) });
         }
     }
 }

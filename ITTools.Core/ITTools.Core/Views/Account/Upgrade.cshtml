@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Upgrade Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/upgrade.css" />
+
+@* <div class="container-sm p-4" style="background-color: #eee"> *@
+    <form class="upgrade-account" asp-action="Upgrade" method="post">
+        <div class="card m-auto" style="width: 100%; max-width: 60rem">
+            <div class="card-body">
+                <h5 class="card-title">Enter the following sentence to upgrade to Premium:</h5>
+                <hr/>
+                <blockquote class="blockquote">
+                    <i class="fa fa-quote-left" aria-hidden="true"></i> <em><span id="random-sentence" class="no-copy"></span></em> <i class="fa fa-quote-right" aria-hidden="true"></i>
+                </blockquote>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Enter the sentence here" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+                
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </form>
+@* </div> *@
+
+@section Scripts {
+    <script src="~/js/upgrade.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+}

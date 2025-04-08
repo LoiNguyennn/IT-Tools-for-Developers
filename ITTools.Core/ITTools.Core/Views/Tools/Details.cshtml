@@ -1,8 +1,10 @@
-﻿@model ITTools.Core.Models.Tool
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model ITTools.Core.Models.Tool
 
 @{
     ViewData["Title"] = $"Tool Details - {Model.Name}";
     bool hasPlugin = ViewBag.HasPlugin;
+    bool isPremiumUser = ViewBag.IsPremium;
     // Create a CSS-friendly class name
     string toolClass = Model.Name.ToLower().Replace(" ", "-");
     // Determine the partial view name
@@ -11,116 +13,145 @@
 
 <link rel="stylesheet" href="~/css/details.css" />
 
-<div class="container tool-details-container @toolClass">
-    <h1>@Model.Name</h1>
-
-    @* Try to render the specific partial view for the tool *@
-    @try
-    {
-        await Html.RenderPartialAsync(partialViewName, Model);
-    }
-    catch
-    {
-        @* Fallback to default structure if the partial view doesn't exist *@
-        <div class="tool-details-card">
-            <dl class="row">
-                <dt class="col-sm-3">Name</dt>
-                <dd class="col-sm-9">@Model.Name</dd>
-
-                <dt class="col-sm-3">Description</dt>
-                <dd class="col-sm-9">@Model.Description</dd>
-
-                <dt class="col-sm-3">Category</dt>
-                <dd class="col-sm-9">@Model.Category?.Name</dd>
-
-                <dt class="col-sm-3">Status</dt>
-                <dd class="col-sm-9">
-                    @if (Model.IsEnabled)
-                    {
-                        <span class="badge badge-enabled">Enabled</span>
-                    }
-                    else
-                    {
-                        <span class="badge badge-disabled">Disabled</span>
-                    }
-                </dd>
-
-                <dt class="col-sm-3">Type</dt>
-                <dd class="col-sm-9">
-                    @if (hasPlugin)
-                    {
-                        <span class="badge badge-executable">Executable</span>
-                    }
-                    else
-                    {
-                        <span class="badge badge-info">Information Only</span>
-                    }
-                </dd>
-            </dl>
-
-            @if (hasPlugin)
-            {
-                <div class="try-it-out mt-4">
-                    <h4>Try It Out</h4>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="toolInput" placeholder="Enter input here">
-                        <button class="btn btn-primary" type="button" id="executeButton">Execute</button>
-                    </div>
-                    <div class="result-section mt-2">
-                        <h5>Result:</h5>
-                        <pre id="resultOutput"></pre>
-                    </div>
-                </div>
-            }
-        </div>
-    }
-
-    <div class="back-button-container mt-3">
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</div>
-
-@if (hasPlugin)
+@if (!isPremiumUser && Model.IsPremium)
 {
-    @section Scripts {
-    <script>
-        $(document).ready(function() {
-            const $executeButton = $('#executeButton');
-            const $toolInput = $('#toolInput');
-            const $resultOutput = $('#resultOutput');
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">This is a Premium tool!</h5>
+                </div>
+                <div class="modal-body">
+                    You need to upgrade to Premium to use this tool!
+                </div>
+                <div class="modal-footer">
+                    <a href="/Account/Upgrade" type="button" class="btn btn-primary" data-dismiss="modal">Upgrade</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container tool-details-container @toolClass">
+        <h1>@Model.Name</h1>
 
-            function executeTool() {
-                const input = $toolInput.val();
-                
-                const toolName = '@Model.Name';
+        @* Try to render the specific partial view for the tool *@
+        @try
+        {
+            await Html.RenderPartialAsync(partialViewName, Model);
+        }
+        catch
+        {
+            @* Fallback to default structure if the partial view doesn't exist *@
+            <div class="tool-details-card">
+                <dl class="row">
+                    <dt class="col-sm-3">Name</dt>
+                    <dd class="col-sm-9">@Model.Name</dd>
 
-                $executeButton.prop('disabled', true);
-                $resultOutput.text('Processing...');
+                    <dt class="col-sm-3">Description</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
 
-                $.ajax({
-                    url: '@Url.Action("Execute")',
-                    type: 'POST',
-                    data: { toolName: toolName, input: input },
-                    success: function(response) {
-                        $resultOutput.text(response.result);
-                    },
-                    error: function(xhr) {
-                        $resultOutput.text('Error: ' + (xhr.responseText || 'An error occurred'));
-                    },
-                    complete: function() {
-                        $executeButton.prop('disabled', false);
+                    <dt class="col-sm-3">Category</dt>
+                    <dd class="col-sm-9">@Model.Category?.Name</dd>
+
+                    <dt class="col-sm-3">Status</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.IsEnabled)
+                        {
+                            <span class="badge badge-enabled">Enabled</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-disabled">Disabled</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Type</dt>
+                    <dd class="col-sm-9">
+                        @if (hasPlugin)
+                        {
+                            <span class="badge badge-executable">Executable</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-info">Information Only</span>
+                        }
+                    </dd>
+                </dl>
+
+                @if (hasPlugin)
+                {
+                    <div class="try-it-out mt-4">
+                        <h4>Try It Out</h4>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="toolInput" placeholder="Enter input here">
+                            <button class="btn btn-primary" type="button" id="executeButton">Execute</button>
+                        </div>
+                        <div class="result-section mt-2">
+                            <h5>Result:</h5>
+                            <pre id="resultOutput"></pre>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="back-button-container mt-3">
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    @if (hasPlugin)
+    {
+        @section Scripts {
+        <script>
+            $(document).ready(function() {
+                const $executeButton = $('#executeButton');
+                const $toolInput = $('#toolInput');
+                const $resultOutput = $('#resultOutput');
+
+                function executeTool() {
+                    const input = $toolInput.val();
+                    
+                    const toolName = '@Model.Name';
+
+                    $executeButton.prop('disabled', true);
+                    $resultOutput.text('Processing...');
+
+                    $.ajax({
+                        url: '@Url.Action("Execute")',
+                        type: 'POST',
+                        data: { toolName: toolName, input: input },
+                        success: function(response) {
+                            $resultOutput.text(response.result);
+                        },
+                        error: function(xhr) {
+                            $resultOutput.text('Error: ' + (xhr.responseText || 'An error occurred'));
+                        },
+                        complete: function() {
+                            $executeButton.prop('disabled', false);
+                        }
+                    });
+                }
+
+                $executeButton.click(executeTool);
+
+                $toolInput.keypress(function(e) {
+                    if (e.which == 13) {
+                        executeTool();
                     }
                 });
-            }
-
-            $executeButton.click(executeTool);
-
-            $toolInput.keypress(function(e) {
-                if (e.which == 13) {
-                    executeTool();
-                }
             });
+        </script>
+        }
+    }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#myModal').modal('show');
         });
     </script>
-    }
 }

@@ -50,6 +50,9 @@ namespace ITTools.Core.Controllers
             {
                 return NotFound();
             }
+            
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.IsPremium = user?.IsPremium ?? false;
 
             var pluginTool = _toolService.GetTools().FirstOrDefault(t => t.Name == tool.Name);
             ViewBag.HasPlugin = pluginTool != null;
