@@ -30,6 +30,14 @@
             </div>
         </div>
     </div>
+    
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                $('#myModal').modal('show');
+            });
+        </script>
+    }
 }
 else
 {
@@ -105,7 +113,7 @@ else
     @if (hasPlugin)
     {
         @section Scripts {
-        <script>
+            <script>
             $(document).ready(function() {
                 const $executeButton = $('#executeButton');
                 const $toolInput = $('#toolInput');
@@ -146,12 +154,4 @@ else
         </script>
         }
     }
-}
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#myModal').modal('show');
-        });
-    </script>
 }
