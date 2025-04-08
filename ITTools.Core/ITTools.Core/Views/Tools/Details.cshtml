@@ -114,44 +114,44 @@ else
     {
         @section Scripts {
             <script>
-            $(document).ready(function() {
-                const $executeButton = $('#executeButton');
-                const $toolInput = $('#toolInput');
-                const $resultOutput = $('#resultOutput');
+                $(document).ready(function() {
+                    const $executeButton = $('#executeButton');
+                    const $toolInput = $('#toolInput');
+                    const $resultOutput = $('#resultOutput');
 
-                function executeTool() {
-                    const input = $toolInput.val();
-                    
-                    const toolName = '@Model.Name';
+                    function executeTool() {
+                        const input = $toolInput.val();
+                        
+                        const toolName = '@Model.Name';
 
-                    $executeButton.prop('disabled', true);
-                    $resultOutput.text('Processing...');
+                        $executeButton.prop('disabled', true);
+                        $resultOutput.text('Processing...');
 
-                    $.ajax({
-                        url: '@Url.Action("Execute")',
-                        type: 'POST',
-                        data: { toolName: toolName, input: input },
-                        success: function(response) {
-                            $resultOutput.text(response.result);
-                        },
-                        error: function(xhr) {
-                            $resultOutput.text('Error: ' + (xhr.responseText || 'An error occurred'));
-                        },
-                        complete: function() {
-                            $executeButton.prop('disabled', false);
+                        $.ajax({
+                            url: '@Url.Action("Execute")',
+                            type: 'POST',
+                            data: { toolName: toolName, input: input },
+                            success: function(response) {
+                                $resultOutput.text(response.result);
+                            },
+                            error: function(xhr) {
+                                $resultOutput.text('Error: ' + (xhr.responseText || 'An error occurred'));
+                            },
+                            complete: function() {
+                                $executeButton.prop('disabled', false);
+                            }
+                        });
+                    }
+
+                    $executeButton.click(executeTool);
+
+                    $toolInput.keypress(function(e) {
+                        if (e.which == 13) {
+                            executeTool();
                         }
                     });
-                }
-
-                $executeButton.click(executeTool);
-
-                $toolInput.keypress(function(e) {
-                    if (e.which == 13) {
-                        executeTool();
-                    }
                 });
-            });
-        </script>
+            </script>
         }
     }
 }
