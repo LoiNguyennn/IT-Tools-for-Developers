@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ITTools.Core.Models;
+using ITTools.Core.viewModels;
+using ITTools.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITTools.Controllers
 {
@@ -8,11 +11,13 @@ namespace ITTools.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -56,12 +61,66 @@ namespace ITTools.Controllers
             }
             return View();
         }
+        
+        [HttpGet]
+        public async Task<IActionResult> Detail()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            
+            var favoriteTools = await _context.Favorites
+                .Where(f => f.UserId == user.Id)
+                .OrderByDescending(f => f.CreatedAt)
+                .Include(f => f.Tool)
+                .ThenInclude(t => t.Category)
+                .Select(f => f.Tool)
+                .Take(3)
+                .ToListAsync();
+
+            var viewModel = new AccountDetailViewModel
+            {
+                User = user!,
+                FavoriteTools = favoriteTools,
+                IsPremium = user!.IsPremium
+            };
+            return View(viewModel);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> Upgrade()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || user.IsPremium)
+            {
+                TempData["ShowUpgradeAlert"] = true;
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+       [HttpPost, ActionName("Upgrade")]
+        public async Task<IActionResult> UpgradeUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            user.IsPremium = true;
+            
+            var result = await _userManager.UpdateAsync(user);
+
+            return Json(result.Succeeded
+                ? new { success = true, redirectUrl = Url.Action("Detail", "Account") }
+                : new { success = false, errors = result.Errors.Select(e => e.Description) });
         }
     }
 }

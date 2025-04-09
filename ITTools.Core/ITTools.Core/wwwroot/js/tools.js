@@ -23,12 +23,57 @@
 
         const toolId = $(this).data("tool-id");
         console.log("Favorite clicked for tool ID:", toolId);
+        const favoriteIcon = $(this).find(".favorite-toggle");
+        const isFavorited = favoriteIcon.hasClass('fa-solid');
 
-        // Add your favorite logic here
-        // For example:
-        // $.post('/Tools/ToggleFavorite', { id: toolId }, function(response) {
-        //    console.log("Favorite toggled", response);
-        // });
+        // Toggle classes correctly
+        favoriteIcon.toggleClass('fa-solid fa-regular');
+
+        // Update title for tooltip
+        favoriteIcon.attr('title', isFavorited ? 'Favorite' : 'Unfavorite');
+
+        // If you're using Bootstrap tooltips, you must also refresh it
+        favoriteIcon.tooltip('dispose').tooltip();
+        
+        $.ajax({
+            type: 'POST',
+            url: '/Tools/ToggleFavorite',
+            data: { id: toolId },
+            success: function (response) {
+                if (response.type === 1) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Favorited tool!",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
+            },
+            error: function (xhr) {
+                // If unauthorized, revert icon and show login alert
+                if (xhr.status === 401) {
+                    favoriteIcon.toggleClass('fa-solid fa-regular'); // revert toggle
+                    Swal.fire({
+                        icon: "warning",
+                        title: "You need to log in!",
+                        text: "Please sign in to save favorites.",
+                        confirmButtonText: "Log In",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/Account/Login"; // or your login route
+                        }
+                    });
+                } else {
+                    // Optional: handle other errors
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops!",
+                        text: "Something went wrong.",
+                    });
+                }
+            }
+        });
     });
 
     // Handle edit icon click - navigate to edit page

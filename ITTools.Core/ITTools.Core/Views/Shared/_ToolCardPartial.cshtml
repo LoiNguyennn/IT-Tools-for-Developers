@@ -1,6 +1,8 @@
 ﻿@model ITTools.Core.Models.Tool
 @using System.IO
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
 @{
     var iconName = Model.Name?.Replace(" ", "");
     var iconFileName = $"{iconName}.svg";
@@ -20,8 +22,12 @@
         <div class="card-title d-flex justify-content-between align-items-center">
             <img class="tool-icon" src="@Url.Content(finalIconPath)" alt="@Model.Name" onerror="this.src='@Url.Content("~/assets/default.svg")';" />
             <div class="d-flex align-items-center">
+                @{
+                    var userId = UserManager.GetUserId(User);
+                    var isFavorited = Model.Favorites.Any(f => f.UserId == userId);
+                }
                 <div class="favorite-icon-container" data-tool-id="@Model.Id">
-                    <img class="favorite-icon" data-toggle="tooltip" data-placement="top" title="Favorite" src="~/assets/ic_favorite.svg" />
+                    <i class="@(isFavorited ? "fa-solid" : "fa-regular") fa-heart favorite-toggle" style="color: #d1001f;" data-toggle="tooltip" title="@(isFavorited ? "Unfavorite" : "Add to favorites")"></i>
                 </div>
                 @if (User.IsInRole("Admin"))
                 {

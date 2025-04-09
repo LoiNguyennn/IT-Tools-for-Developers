@@ -1,0 +1,128 @@
+@model ITTools.Core.viewModels.AccountDetailViewModel
+@{
+    ViewData["Title"] = "Account Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<section style="background-color: #eee;">
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="card h-100">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                        <img src="~/assets/profile_image_placeholder.svg" alt="avatar"
+                             class="rounded-circle img-fluid" style="max-width: 150px;">
+                        <h5 class="my-3">@User.Identity?.Name</h5>
+                        @* <p class="text-muted mb-1">Placeholder</p> *@
+                        @* <p class="text-muted mb-4">Placeholder, CA</p> *@
+                        @if (Model.IsPremium)
+                        {
+                            <div class="d-flex justify-content-center">
+                                <div class="btn btn-success d-flex align-items-center gap-2">
+                                    Premium
+                                    <img src="~/assets/certified.svg" alt="Certified icon" style="height: 1em; width: auto;" />
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <form asp-action="Upgrade" method="get">
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">Upgrade Account</button>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <p class="mb-0">Email/Name</p>
+                            </div>
+                            <div class="col-sm-7">
+                                <p class="text-muted mb-0">@User.Identity?.Name</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <p class="mb-0">Role</p>
+                            </div>
+                            <div class="col-sm-7">
+                                <p class="text-muted mb-0">@(User.IsInRole("Admin") ? "Admin" : "User")</p>
+                            </div>
+                        </div>
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <p class="mb-0">Membership</p>
+                                </div>
+                                <div class="col-sm-7">
+                                    <p class="text-muted mb-0">@(Model.IsPremium ? "Premium" : "Free")</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-4 mb-md-0">
+                            <div class="card-body">
+                                <div class="text-success mb-4 d-flex flex-row align-items-center gap-1">
+                                    Favorite Tools
+                                    <i class="fa-solid fa-star" style="color: #ffde21;"></i>
+                                </div>
+                                @* Display user's favorite tools *@
+                                @if (Model.FavoriteTools.Count > 0)
+                                {
+                                    var idx = 0;
+                                
+                                    @foreach (var tool in Model.FavoriteTools)
+                                    {
+                                        var marginClass = idx > 0 ? "mt-4" : "";
+                                        idx++;  
+                                    
+                                        <div class="@marginClass d-flex flex-row align-items-center justify-content-between">
+                                            <p class="mb-1" style="font-size: .88rem;">
+                                                <a class="text-decoration-none" href="/Tools/Details/@tool.Id">@tool.Name</a> &#183;
+                                                <span class="fw-light text-secondary" style="font-size: .77rem;">@tool.Category.Name</span>
+                                                @if (tool.IsPremium)
+                                                {
+                                                    <i class="fa-solid fa-crown ms-1" title="Premium Tool" style="color: #ffde21;"></i>
+                                                } 
+                                            </p>
+                                            <a
+                                                class="remove-favorite fw-light text-decoration-none"
+                                                data-tool-id="@tool.Id"
+                                                style="font-size: 0.77rem; cursor: pointer;">
+                                                Remove
+                                            </a>
+                                        </div>
+                                    }
+                                    <div class="text-center mt-4">
+                                        <a href="/Tools?myTools=true" class="text-decoration-none small">View All &darr;</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-secondary text-center" style="font-size: .88rem">Looks a little lonely here — start adding your favorite tools :)</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/details.js"></script>
+}
