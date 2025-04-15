@@ -1,6 +1,7 @@
 ﻿using ITTools.Core.Models;
 using ITTools.Data;
 using ITTools.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,12 +12,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register ApplicationDbContext with scoped lifetime (default for EF Core)
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false; // Adjust as needed
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-// Register ToolService as aavera
+// Add Google Authentication
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        // Optional: Map additional claims
+        options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+    });
 
+// Register ToolService
 builder.Services.AddSingleton<ToolService>(); // Changed from AddScoped to AddSingleton
 builder.Services.AddControllersWithViews();
 

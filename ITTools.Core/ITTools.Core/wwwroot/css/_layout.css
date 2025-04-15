@@ -115,7 +115,7 @@ body {
 
 /* Button styling */
 .btn-primary {
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color)); /* Gradient từ lavender đến light blue-gray */
+    background: var(--primary-color); /* Sử dụng màu Lavender */
     border: none;
     border-radius: 8px;
     padding: 10px 24px;
@@ -128,7 +128,7 @@ body {
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(173, 178, 212, 0.4);
-        background: linear-gradient(to right, var(--secondary-color), var(--primary-color)); /* Đảo ngược gradient */
+        background: var(--primary-color); /* Giữ nguyên màu khi hover */
     }
 
 /* Form controls */

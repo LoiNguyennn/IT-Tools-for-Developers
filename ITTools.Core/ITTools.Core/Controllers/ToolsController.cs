@@ -22,23 +22,49 @@ namespace ITTools.Core.Controllers
 
         public async Task<IActionResult> Index(bool myTools = false)
         {
+            List<Tool> tools;
+
             if (User.IsInRole("Admin"))
             {
-                return View(await _toolService.GetAllToolsAsync());
+                tools = await _toolService.GetAllToolsAsync();
             }
-            
-            var tools = await _toolService.GetEnabledToolsAsync();
-            
-            if (!myTools)
-                return View(tools);
-            
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return RedirectToAction("Login", "Account");
+            else
+            {
+                tools = await _toolService.GetEnabledToolsAsync();
+            }
 
-            tools = tools
-                .Where(t => t.Favorites.Any(f => f.UserId == user.Id))
-                .ToList();
+            if (myTools)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                    return RedirectToAction("Login", "Account");
+
+                tools = tools
+                    .Where(t => t.Favorites.Any(f => f.UserId == user.Id))
+                    .ToList();
+            }
+
+            // Separate favorite tools for the logged-in user
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                var favoriteTools = tools
+                    .Where(t => t.Favorites.Any(f => f.UserId == user.Id))
+                    .ToList();
+
+                var otherTools = tools
+                    .Where(t => !t.Favorites.Any(f => f.UserId == user.Id))
+                    .ToList();
+
+                ViewBag.FavoriteTools = favoriteTools;
+                ViewBag.OtherTools = otherTools;
+            }
+            else
+            {
+                ViewBag.FavoriteTools = new List<Tool>();
+                ViewBag.OtherTools = tools;
+            }
 
             return View(tools);
         }
