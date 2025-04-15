@@ -11,6 +11,16 @@
                 $(this).closest(".col-md-4").hide();
             }
         });
+
+        // Show/hide section titles based on visible cards
+        $(".tools-section").each(function () {
+            const visibleCards = $(this).find(".col-md-4:visible").length;
+            if (visibleCards === 0) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
     });
 
     // Initialize tooltips
@@ -25,6 +35,7 @@
         console.log("Favorite clicked for tool ID:", toolId);
         const favoriteIcon = $(this).find(".favorite-toggle");
         const isFavorited = favoriteIcon.hasClass('fa-solid');
+        const toolCard = $(this).closest(".tool-card");
 
         // Toggle classes correctly
         favoriteIcon.toggleClass('fa-solid fa-regular');
@@ -34,13 +45,14 @@
 
         // If you're using Bootstrap tooltips, you must also refresh it
         favoriteIcon.tooltip('dispose').tooltip();
-        
+
         $.ajax({
             type: 'POST',
             url: '/Tools/ToggleFavorite',
             data: { id: toolId },
             success: function (response) {
                 if (response.type === 1) {
+                    // Tool was favorited
                     Swal.fire({
                         position: "top-end",
                         icon: "success",
@@ -48,6 +60,23 @@
                         showConfirmButton: false,
                         timer: 1000
                     });
+
+                    // Optional: Move the tool card to the favorites section without refreshing
+                    if ($("#favorite-tools-container").length) {
+                        const card = toolCard.closest(".col-md-4");
+                        card.fadeOut(300, function () {
+                            card.detach().prependTo("#favorite-tools-container").fadeIn(300);
+                        });
+                    }
+                } else {
+                    // Tool was unfavorited
+                    // Optional: Move the tool card to the other tools section
+                    if ($("#tools-container").length) {
+                        const card = toolCard.closest(".col-md-4");
+                        card.fadeOut(300, function () {
+                            card.detach().appendTo("#tools-container").fadeIn(300);
+                        });
+                    }
                 }
             },
             error: function (xhr) {
@@ -109,7 +138,7 @@
         }
 
         $.ajax({
-            url: '@Url.Action("Execute", "Tools")',
+            url: '/Tools/Execute',
             type: 'POST',
             data: {
                 toolName: toolName,

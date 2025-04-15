@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ITTools.Core.Models;
-using ITTools.Core.viewModels;
 using ITTools.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
 
 namespace ITTools.Controllers
 {
@@ -61,7 +62,70 @@ namespace ITTools.Controllers
             }
             return View();
         }
-        
+
+        [HttpGet]
+        public IActionResult LoginWithGoogle()
+        {
+            var redirectUrl = Url.Action("GoogleResponse", "Account");
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
+            return new ChallengeResult(GoogleDefaults.AuthenticationScheme, properties);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                ModelState.AddModelError("", "Error loading external login information.");
+                return RedirectToAction("Login");
+            }
+
+            // Try to sign in with the external login
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // If the user doesn't exist, create a new one
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (!string.IsNullOrEmpty(email))
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        UserName = email,
+                        Email = email
+                    };
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (createResult.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(user, "User"); // Default role
+                        await _userManager.AddLoginAsync(user, info);
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    foreach (var error in createResult.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+                else
+                {
+                    // Link Google login to existing user
+                    await _userManager.AddLoginAsync(user, info);
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+            ModelState.AddModelError("", "Unable to retrieve email from Google.");
+            return RedirectToAction("Login");
+        }
+
         [HttpGet]
         public async Task<IActionResult> Detail()
         {

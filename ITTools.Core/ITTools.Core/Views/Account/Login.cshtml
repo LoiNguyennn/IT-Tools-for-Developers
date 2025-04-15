@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link rel="stylesheet" href="~/css/login.css"/>
+<link rel="stylesheet" href="~/css/login.css" />
 
 <div class="login-container">
     <div class="login-header">
@@ -39,6 +39,13 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
     </form>
+
+    <div class="d-grid gap-2 mt-3">
+        <a href="@Url.Action("LoginWithGoogle", "Account")" class="btn btn-google">
+            <img src="https://www.google.com/favicon.ico" alt="Google logo" class="google-logo" />
+            Sign in with Google
+        </a>
+    </div>
 
     <div class="link-section">
         <p class="mb-2">
