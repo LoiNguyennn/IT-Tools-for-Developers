@@ -1,0 +1,64 @@
+﻿@model IEnumerable<ITTools.Core.Models.Tool>
+@{
+    ViewData["Title"] = "Tools";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var favoriteTools = ViewBag.FavoriteTools as List<ITTools.Core.Models.Tool>;
+    var otherTools = ViewBag.OtherTools as List<ITTools.Core.Models.Tool>;
+}
+<link rel="stylesheet" href="~/css/tools.css" />
+<link rel="stylesheet" href="~/css/tool_card.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="container">
+    <div class="row">
+        <div class="input-group rounded mb-4 mt-2">
+            <input type="search" id="search-tools" class="form-control rounded" placeholder="Search tools" aria-label="Search" aria-describedby="search-addon" />
+            <span class="input-group-text border-0" id="search-addon">
+                <i class="fas fa-search"></i>
+            </span>
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="mb-3">
+                <a asp-action="AddTool" asp-controller="Admin" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Tool
+                </a>
+            </div>
+        }
+
+        @if (User != null && User.Identity != null && User.Identity.IsAuthenticated && favoriteTools != null && favoriteTools.Any())
+        {
+            <div class="tools-section mb-4">
+                <h3 class="section-title">Your Favorite Tools</h3>
+                <hr class="section-divider" />
+                <div class="row" id="favorite-tools-container">
+                    @foreach (var tool in favoriteTools)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <partial name="_ToolCardPartial" model="tool" />
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="tools-section">
+            <h3 class="section-title">Tools</h3>
+            <hr class="section-divider" />
+            <div class="row" id="tools-container">
+                @if (otherTools != null)
+                {
+                    @foreach (var tool in otherTools)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <partial name="_ToolCardPartial" model="tool" />
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/tools.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+}

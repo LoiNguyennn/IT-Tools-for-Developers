@@ -1,0 +1,110 @@
+﻿@model ITTools.Core.Models.Tool
+
+@{
+    bool hasPlugin = ViewBag.HasPlugin;
+}
+
+<div class="tool-details-card csv-row-counter-card">
+    <div class="csv-header">
+        <h2 class="csv-title">@Model.Name</h2>
+        <span class="csv-subtitle">File Processing Utility</span>
+    </div>
+    <dl class="row csv-details">
+        <dt class="col-sm-4">Name</dt>
+        <dd class="col-sm-8">@Model.Name</dd>
+
+        <dt class="col-sm-4">Description</dt>
+        <dd class="col-sm-8">@Model.Description</dd>
+
+        <dt class="col-sm-4">Category</dt>
+        <dd class="col-sm-8">@Model.Category?.Name</dd>
+
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8">
+            @if (Model.IsEnabled)
+            {
+                <span class="badge badge-enabled">Enabled</span>
+            }
+            else
+            {
+                <span class="badge badge-disabled">Disabled</span>
+            }
+        </dd>
+
+        <dt class="col-sm-4">Type</dt>
+        <dd class="col-sm-8">
+            @if (hasPlugin)
+            {
+                <span class="badge badge-executable">Executable</span>
+            }
+            else
+            {
+                <span class="badge badge-info">Information Only</span>
+            }
+        </dd>
+    </dl>
+
+    @if (hasPlugin)
+    {
+        <div class="csv-try-it-out mt-4">
+            <h4>Try It Out</h4>
+            <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="options" id="option1" autocomplete="off" checked> Upload CSV
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> Paste CSV
+                </label>
+            </div>
+
+            <div id="pasteCsvInput" class="input-group mb-3 d-none">
+                <textarea rows="6" class="form-control csv-input" id="toolInput" placeholder="Paste CSV content here"></textarea>
+                <button class="btn btn-primary csv-execute-btn" type="button" id="executeButton">Count Rows</button>
+            </div>
+            
+            <div id="uploadForm" class="input-group mb-3">
+                <input id="csvFile" type="file" class="form-control" name="csvFile" accept=".csv" required>
+                <button class="btn btn-primary csv-execute-btn" type="button" id="executeCSVUpload">Count Rows</button>
+            </div>
+            
+            <div class="result-section mt-2">
+                <h5>Row Count:</h5>
+                <pre id="resultOutput" class="csv-result"></pre>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('input[name="options"]').change(function () {
+        if ($('#option1').is(':checked')) {
+            $('#uploadForm').removeClass('d-none');  // Show file upload form
+            $('#pasteCsvInput').addClass('d-none');  // Hide text area input
+        } else {
+            $('#uploadForm').addClass('d-none');  // Hide file upload form
+            $('#pasteCsvInput').removeClass('d-none');  // Show text area input
+        }
+    });
+
+    $('#executeCSVUpload').click(function (event) {
+        let fileInput = $('#csvFile')[0].files[0];
+        if (!fileInput) {
+            alert("Please select a CSV file.");
+            return;
+        }
+
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let csvString = e.target.result;
+            $("#toolInput").val(csvString);
+
+            // Trigger the execute button
+            $("#executeButton").trigger("click");
+        };
+
+        reader.readAsText(fileInput);
+    });
+});
+</script>

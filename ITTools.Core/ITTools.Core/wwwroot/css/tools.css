@@ -1,0 +1,38 @@
+﻿.list-group-item {
+    margin-bottom: 10px;
+}
+
+#result {
+    background-color: #f8f9fa;
+    min-height: 100px;
+    word-wrap: break-word;
+}
+
+.select-tool {
+    float: right;
+}
+
+/* New styles for tool sections */
+.tools-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.section-divider {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-top: 2px solid #007bff;
+    width: 100%;
+}
+
+#favorite-tools-container {
+    background-color: rgba(0, 123, 255, 0.05);
+    padding: 15px 5px;
+    border-radius: 8px;
+}

@@ -1,0 +1,143 @@
+﻿/* wwwroot/css/details.css */
+
+/* Default styles (shared across all tools) */
+.tool-details-container {
+    padding: 30px 0;
+}
+
+    .tool-details-container h1 {
+        color: #ADB2D4; /* Lavender */
+        font-weight: 600;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+    }
+
+        .tool-details-container h1::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(to right, #ADB2D4, #D5E5D5); /* Gradient từ lavender đến light green */
+            bottom: -5px;
+            left: 0;
+        }
+
+.tool-details-card {
+    background-color: #C7D9DD; /* Light blue-gray */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    padding: 25px;
+}
+
+    .tool-details-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .tool-details-card dl dt {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .tool-details-card dl dd {
+        color: #666;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+.badge-enabled {
+    background-color: #D5E5D5; /* Light green */
+    color: #333;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.badge-executable {
+    background-color: #ADB2D4; /* Lavender */
+    color: #fff;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.try-it-out h4 {
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    /*max-width: 600px;*/
+    margin: 0 auto;
+}
+
+    .input-group .form-control {
+        border: 2px solid #ADB2D4; /* Lavender */
+        border-right: none;
+        border-radius: 8px 0 0 8px;
+        background-color: #EEF1DA; /* Light yellow-green */
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+        .input-group .form-control:focus {
+            border-color: #D5E5D5; /* Light green */
+            box-shadow: 0 0 0 0.2rem rgba(213, 229, 213, 0.25);
+        }
+
+.result-section h5 {
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.result-section pre {
+    background-color: #EEF1DA; /* Light yellow-green */
+    border: 1px dashed #D5E5D5; /* Light green */
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 100px;
+    color: #333;
+    font-size: 1rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.back-button-container {
+    text-align: right;
+}
+
+    .back-button-container .btn-secondary {
+        background-color: #C7D9DD; /* Light blue-gray */
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+
+        .back-button-container .btn-secondary:hover {
+            background-color: #D5E5D5; /* Light green */
+            color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(213, 229, 213, 0.3);
+        }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tool-details-container h1 {
+        font-size: 2rem;
+    }
+
+    .tool-details-card {
+        padding: 15px;
+    }
+
+    .input-group {
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,203 @@
+﻿@model ITTools.Core.Models.Tool
+@using System.IO
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
+@{
+    ViewData["Title"] = "Edit Tool";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Check if the icon file exists
+    var iconName = Model.Name?.Replace(" ", "");
+    var iconFileName = $"{iconName}.svg";
+    var iconPhysicalPath = System.IO.Path.Combine(HostingEnvironment.WebRootPath, "assets", iconFileName);
+    var iconExists = System.IO.File.Exists(iconPhysicalPath);
+    var iconPath = iconExists ? $"~/assets/{iconFileName}" : "~/assets/default.svg";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0"><i class="fas fa-edit me-2"></i>Edit Tool</h2>
+                </div>
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong><i class="fas fa-exclamation-triangle me-2"></i>Please correct the following errors:</strong>
+                            <ul class="mb-0 mt-2">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-action="EditTool" method="post" class="needs-validation" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold">Tool Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-wrench"></i></span>
+                                <input asp-for="Name" class="form-control" placeholder="Enter tool name" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tool Icon</label>
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <div class="tool-icon-preview border rounded p-2 mb-2" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                                        <img id="iconPreview" src="@Url.Content(iconPath)" style="max-width: 100%; max-height: 100%;" onerror="this.src='@Url.Content("~/assets/default.svg")'" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-image"></i></span>
+                                        <input type="file" name="IconFile" id="iconFile" class="form-control" accept=".svg" />
+                                        <button type="button" class="btn btn-outline-secondary" id="clearIconBtn">
+                                            <i class="fas fa-times"></i> Clear
+                                        </button>
+                                    </div>
+                                    <div class="form-text">
+                                        Upload SVG icon for this tool. For consistency, we recommend using
+                                        <a href="https://fonts.google.com/icons" target="_blank" class="text-decoration-none">
+                                            Material Symbols & Icons - Google Fonts <i class="fas fa-external-link-alt small ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                      placeholder="Provide a detailed description of this tool"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                            <div class="form-text">Describe the purpose and functionality of this tool.</div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title h6">Tool Status</h5>
+                                        <div class="form-check form-switch mb-2">
+                                            <input asp-for="IsEnabled" class="form-check-input" role="switch" />
+                                            <label asp-for="IsEnabled" class="form-check-label">Enable Tool</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input asp-for="IsPremium" class="form-check-input" role="switch" />
+                                            <label asp-for="IsPremium" class="form-check-label">Premium Feature</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title h6">Category</h5>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                                            <select asp-for="CategoryId" class="form-select"
+                                                    asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name", Model.CategoryId))">
+                                                <option value="">Select a category</option>
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between border-top pt-4">
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteToolModal">
+                                <i class="fas fa-trash-alt me-2"></i>Delete Tool
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteToolModal" tabindex="-1" aria-labelledby="deleteToolModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteToolModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the tool "<strong>@Model.Name</strong>"?</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>This will permanently delete:
+                        <ul class="mb-0 mt-2">
+                            <li>The tool record from the database</li>
+                            <li>The associated DLL file (<code>@(Model.Name.Replace(" ", "") + ".dll")</code>) from the Plugins directory</li>
+                            <li>The tool icon file (<code>@(Model.Name.Replace(" ", "") + ".svg")</code>) from the assets directory</li>
+                        </ul>
+                    </div>
+                    <p class="mb-0 mt-3">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <form asp-action="DeleteTool" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-2"></i>Delete Permanently
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Enable Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
+        // Icon preview functionality
+        $(document).ready(function() {
+            // Define default icon path
+            const defaultIconPath = '@Url.Content("~/assets/default.svg")';
+
+            // Preview uploaded icon
+            $("#iconFile").change(function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $("#iconPreview").attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Clear icon button
+            $("#clearIconBtn").click(function() {
+                $("#iconFile").val('');
+                $("#iconPreview").attr('src', defaultIconPath);
+            });
+        });
+    </script>
+}

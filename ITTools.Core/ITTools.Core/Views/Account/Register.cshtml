@@ -1,0 +1,99 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/register.css" />
+
+<div class="register-container">
+    <!-- Decorative elements -->
+    <div class="decoration decoration-1"></div>
+    <div class="decoration decoration-2"></div>
+
+    <div class="register-header">
+        <h2>Create Account</h2>
+        <p>Join our community to access all features</p>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="form-message error-message">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p class="mb-0">@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    <form asp-action="Register" method="post">
+        <div class="mb-4">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required />
+        </div>
+
+        <div class="mb-4">
+            <label for="password" class="form-label">Create Password</label>
+            <div class="password-container">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter a secure password" required />
+                <div class="password-strength">
+                    <div class="password-strength-meter" id="strengthMeter"></div>
+                </div>
+                <small class="form-text text-muted">Password must be at least 8 characters with letters and numbers</small>
+            </div>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="termsCheck" required>
+            <label class="form-check-label" for="termsCheck">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </div>
+    </form>
+
+    <div class="link-section">
+        <p class="mb-0">
+            Already have an account? <a asp-action="Login">Log in here</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    // Simple password strength meter
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const meter = document.getElementById('strengthMeter');
+
+        if (password.length === 0) {
+            meter.style.width = '0%';
+            return;
+        }
+
+        let strength = 0;
+
+        // Length check
+        if (password.length >= 8) strength += 25;
+
+        // Contains lowercase
+        if (/[a-z]/.test(password)) strength += 25;
+
+        // Contains uppercase
+        if (/[A-Z]/.test(password)) strength += 25;
+
+        // Contains number
+        if (/[0-9]/.test(password)) strength += 25;
+
+        meter.style.width = strength + '%';
+
+        // Change color based on strength
+        if (strength < 50) {
+            meter.style.background = '#ff4d4d';
+        } else if (strength < 75) {
+            meter.style.background = '#ffb84d';
+        } else {
+            meter.style.background = '#52c41a';
+        }
+    });
+</script>

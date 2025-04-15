@@ -1,0 +1,51 @@
+﻿@model ITTools.Core.Models.Tool
+@using System.IO
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var iconName = Model.Name?.Replace(" ", "");
+    var iconFileName = $"{iconName}.svg";
+
+    // Construct path to the file in wwwroot/assets
+    var iconPhysicalPath = System.IO.Path.Combine(HostingEnvironment.WebRootPath, "assets", iconFileName);
+
+    // Check if the specific icon file exists
+    var iconExists = System.IO.File.Exists(iconPhysicalPath);
+
+    // Set the path based on existence check
+    var finalIconPath = iconExists ? $"~/assets/{iconFileName}" : "~/assets/default.svg";
+}
+
+<div class="card h-100 d-flex flex-column tool-card @(User.IsInRole("Admin") && !Model.IsEnabled ? "disabled-tool" : "")" data-tool-id="@Model.Id">
+    <div class="card-body d-flex flex-column">
+        <div class="card-title d-flex justify-content-between align-items-center">
+            <img class="tool-icon" src="@Url.Content(finalIconPath)" alt="@Model.Name" onerror="this.src='@Url.Content("~/assets/default.svg")';" />
+            <div class="d-flex align-items-center">
+                @{
+                    var userId = UserManager.GetUserId(User);
+                    var isFavorited = Model.Favorites.Any(f => f.UserId == userId);
+                }
+                <div class="favorite-icon-container" data-tool-id="@Model.Id">
+                    <i class="@(isFavorited ? "fa-solid" : "fa-regular") fa-heart favorite-toggle" style="color: #d1001f;" data-toggle="tooltip" title="@(isFavorited ? "Unfavorite" : "Add to favorites")"></i>
+                </div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="edit-icon-container" data-tool-id="@Model.Id" data-edit-url="@Url.Action("EditTool", "Admin", new { id = Model.Id })" data-toggle="tooltip" data-placement="top" title="Edit Tool">
+                        <i class="fas fa-edit edit-icon"></i>
+                    </div>
+                }
+            </div>
+        </div>
+        <h5 class="card-title">
+            @Model.Name
+            @if (Model.IsPremium)
+            {
+                <i class="fas fa-crown premium-icon" title="Premium Tool"></i>
+            }
+        </h5>
+        <p class="card-text text-secondary flex-grow-1">
+            @Model.Description
+        </p>
+    </div>
+</div>
