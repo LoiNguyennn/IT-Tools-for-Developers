@@ -11,12 +11,24 @@ namespace ImageVideoTools
 
         public string Execute(string input)
         {
-            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
-            using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(input, QRCodeGenerator.ECCLevel.Q))
-            using (PngByteQRCode qrCode = new PngByteQRCode(qrCodeData))
+            if (string.IsNullOrWhiteSpace(input))
             {
-                byte[] qrCodeBytes = qrCode.GetGraphic(20); // Get the PNG as a byte array
-                return Convert.ToBase64String(qrCodeBytes); // Convert to Base64 string
+                throw new ArgumentException("Input text cannot be empty.");
+            }
+
+            try
+            {
+                using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+                using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(input, QRCodeGenerator.ECCLevel.Q))
+                using (PngByteQRCode qrCode = new PngByteQRCode(qrCodeData))
+                {
+                    byte[] qrCodeBytes = qrCode.GetGraphic(20);
+                    return $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to generate QR code: {ex.Message}", ex);
             }
         }
     }
