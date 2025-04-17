@@ -1,26 +1,29 @@
 ﻿$(document).ready(function () {
     // Search functionality
     $("#search-tools").on("keyup", function () {
-        var keyword = $(this).val().toLowerCase();
+        const keyword = $(this).val().toLowerCase().trim();
+        const toolSection = $(".tools-section");
+
+        let visibleCount = 0;
+
         $(".tool-card").each(function () {
-            var toolName = $(this).find(".card-title").text().toLowerCase();
-            var toolDescription = $(this).find(".card-text").text().toLowerCase();
-            if (toolName.includes(keyword) || toolDescription.includes(keyword)) {
-                $(this).closest(".col-md-4").show();
-            } else {
-                $(this).closest(".col-md-4").hide();
-            }
+            const toolName = $(this).find(".card-title").text().toLowerCase();
+            const toolDescription = $(this).find(".card-text").text().toLowerCase();
+            const isMatch = toolName.includes(keyword) || toolDescription.includes(keyword);
+
+            $(this).closest(".col-md-4").toggle(isMatch);
+            if (isMatch) visibleCount++;
         });
 
-        // Show/hide section titles based on visible cards
-        $(".tools-section").each(function () {
-            const visibleCards = $(this).find(".col-md-4:visible").length;
-            if (visibleCards === 0) {
-                $(this).hide();
-            } else {
-                $(this).show();
-            }
-        });
+        // Toggle the whole section based on how many cards matched
+        toolSection.toggle(visibleCount > 0);
+
+        // Update title accordingly
+        if (visibleCount === 1) {
+            $(".section-title").text("Tool");
+        } else {
+            $(".section-title").text("Tools");
+        }
     });
 
     // Initialize tooltips
