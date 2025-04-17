@@ -21,18 +21,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                    <ul class="navbar-nav w-100 mb-2 mb-sm-0">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="text-center nav-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Tools" asp-action="Index">Tools</a>
+                            <a class="text-center nav-link" asp-controller="Tools" asp-action="Index">Tools</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="text-center nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <partial name="_LoginPartial"/>
                     </ul>
-                    <partial name="_LoginPartial"/>
                 </div>
             </div>
         </nav>
