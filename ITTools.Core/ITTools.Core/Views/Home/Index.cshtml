@@ -1,6 +1,4 @@
-﻿@model IEnumerable<ITTools.Core.Models.Tool>
-
-@{
+﻿@{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -39,26 +37,3 @@
     <h6 class="text-secondary mb-4">A free and open-source suite of useful online tools designed to simplify developers' everyday tasks.</h6>
     <a class="btn btn-success" href="/Tools">All the tools &rarr;</a>
 </div>
-
-
-
-@* @if (User.Identity?.IsAuthenticated == true) *@
-@* { *@
-@*     <p>Hello, @User.Identity.Name!</p> *@
-@* } *@
-@* else *@
-@* { *@
-@*     <p><a href="/Account/Login">Login</a> now to save your favorite tools!</p> *@
-@* } *@
-
-
-@*<div class="container">
-    <div class="row">
-        @foreach (var tool in Model)
-        {
-            <div class="col-md-4 mb-4"> <!-- Adjust column size as needed -->
-                <partial name="_ToolCardPartial" model="tool" />
-            </div>
-        }
-    </div>
-</div>*@
