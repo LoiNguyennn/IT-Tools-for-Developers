@@ -5,6 +5,7 @@
     ViewData["Title"] = $"Tool Details - {Model.Name}";
     bool hasPlugin = ViewBag.HasPlugin;
     bool isPremiumUser = ViewBag.IsPremium;
+    bool isAuthenticated = User.Identity.IsAuthenticated; // Check if user is logged in
     // Create a CSS-friendly class name
     string toolClass = Model.Name.ToLower().Replace(" ", "-");
     // Determine the partial view name
@@ -13,7 +14,33 @@
 
 <link rel="stylesheet" href="~/css/details.css" />
 
-@if (!isPremiumUser && Model.IsPremium)
+@if (!isAuthenticated && Model.IsPremium)
+{
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                </div>
+                <div class="modal-body">
+                    Please log in and upgrade to Premium to use this tool!
+                </div>
+                <div class="modal-footer">
+                    <a href="/Account/Login" type="button" class="btn btn-primary" data-dismiss="modal">Log In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                $('#loginModal').modal('show');
+            });
+        </script>
+    }
+}
+else if (!isPremiumUser && Model.IsPremium)
 {
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -30,7 +57,7 @@
             </div>
         </div>
     </div>
-    
+
     @section Scripts {
         <script>
             $(document).ready(function () {
@@ -113,45 +140,45 @@ else
     @if (hasPlugin)
     {
         @section Scripts {
-            <script>
-                $(document).ready(function() {
-                    const $executeButton = $('#executeButton');
-                    const $toolInput = $('#toolInput');
-                    const $resultOutput = $('#resultOutput');
+        <script>
+            $(document).ready(function() {
+                const $executeButton = $('#executeButton');
+                const $toolInput = $('#toolInput');
+                const $resultOutput = $('#resultOutput');
 
-                    function executeTool() {
-                        const input = $toolInput.val();
-                        
-                        const toolName = '@Model.Name';
+                function executeTool() {
+                    const input = $toolInput.val();
 
-                        $executeButton.prop('disabled', true);
-                        $resultOutput.text('Processing...');
+                    const toolName = '@Model.Name';
 
-                        $.ajax({
-                            url: '@Url.Action("Execute")',
-                            type: 'POST',
-                            data: { toolName: toolName, input: input },
-                            success: function(response) {
-                                $resultOutput.text(response.result);
-                            },
-                            error: function(xhr) {
-                                $resultOutput.text('Error: ' + (xhr.responseText || 'An error occurred'));
-                            },
-                            complete: function() {
-                                $executeButton.prop('disabled', false);
-                            }
-                        });
-                    }
+                    $executeButton.prop('disabled', true);
+                    $resultOutput.text('Processing...');
 
-                    $executeButton.click(executeTool);
-
-                    $toolInput.keypress(function(e) {
-                        if (e.which == 13) {
-                            executeTool();
+                    $.ajax({
+                        url: '@Url.Action("Execute")',
+                        type: 'POST',
+                        data: { toolName: toolName, input: input },
+                        success: function(response) {
+                            $resultOutput.text(response.result);
+                        },
+                        error: function(xhr) {
+                            $resultOutput.text('Error: ' + (xhr.responseText || 'An error occurred'));
+                        },
+                        complete: function() {
+                            $executeButton.prop('disabled', false);
                         }
                     });
+                }
+
+                $executeButton.click(executeTool);
+
+                $toolInput.keypress(function(e) {
+                    if (e.which == 13) {
+                        executeTool();
+                    }
                 });
-            </script>
+            });
+        </script>
         }
     }
 }
