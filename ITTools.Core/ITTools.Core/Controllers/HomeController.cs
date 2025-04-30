@@ -11,10 +11,9 @@ namespace ITTools.Core.Controllers
             _toolService = toolService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var tools = await _toolService.GetAllToolsAsync();
-            return View(tools);
+            return View();
         }
 
         public IActionResult Privacy()
