@@ -9,7 +9,7 @@ namespace StringProcessing
 {
     public class Uppercase : ITool
     {
-        public string Name => "Uppercase Converter";
+        public string Name => "Uppercase";
         public string Description => "Converts a given string to uppercase.";
 
         public string Category => "String Tools";

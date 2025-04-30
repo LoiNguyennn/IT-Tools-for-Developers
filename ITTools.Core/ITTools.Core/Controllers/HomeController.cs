@@ -16,5 +16,15 @@ namespace ITTools.Core.Controllers
             var tools = await _toolService.GetAllToolsAsync();
             return View(tools);
         }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Terms()
+        {
+            return View();
+        }
     }
 }

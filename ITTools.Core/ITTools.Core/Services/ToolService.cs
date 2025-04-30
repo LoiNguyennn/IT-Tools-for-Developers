@@ -1,12 +1,7 @@
 ﻿using ITTools.Core.Models;
 using ITTools.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection; // Add this for IServiceScopeFactory
-using System.Reflection;
-using System.IO;
 using System.Runtime.Loader;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace ITTools.Services
@@ -204,6 +199,8 @@ namespace ITTools.Services
                     // Delete the DLL file
                     string dllFileName = tool.Name.Replace(" ", "") + ".dll";
                     string dllFilePath = Path.Combine(_pluginPath, dllFileName);
+
+                    Debug.WriteLine($">>> FILE NAME: {dllFileName}");
 
                     if (File.Exists(dllFilePath))
                     {
