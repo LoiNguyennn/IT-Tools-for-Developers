@@ -1,29 +1,39 @@
-﻿@model IEnumerable<ITTools.Core.Models.Tool>
-
-@{
+﻿@{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Welcome</h1>
+<style>
+    body {
+        background-color: #ffffff;
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+        margin: 0;
+        transition: background 0.3s, color 0.3s;
+    }
+    .badge {
+        background: #d6ffe2;
+        color: #256029;
+        padding: 0.3rem 0.6rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        margin-right: 0.4rem;
+    }
+    .navbar-brand {
+        
+    }
+</style>
 
-@if (User.Identity?.IsAuthenticated == true)
-{
-    <p>Hello, @User.Identity.Name!</p>
-}
-else
-{
-    <p><a href="/Account/Login">Login</a> now to save your favorite tools!</p>
-}
-
-
-@*<div class="container">
-    <div class="row">
-        @foreach (var tool in Model)
-        {
-            <div class="col-md-4 mb-4"> <!-- Adjust column size as needed -->
-                <partial name="_ToolCardPartial" model="tool" />
-            </div>
-        }
+<div class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+    <div class="mb-2">
+        <span class="badge">Open Source</span>
+        <span class="badge">Free</span>
+        <span class="badge">Self-hostable</span>
     </div>
-</div>*@
+    <div class="navbar-brand mb-2" style="font-size: clamp(36px, 8vw, 64px);">
+        ITTools
+    </div>
+    <h6 class="text-secondary mb-4">A free and open-source suite of useful online tools designed to simplify developers' everyday tasks.</h6>
+    <a class="btn btn-success" href="/Tools">All the tools &rarr;</a>
+</div>

@@ -27,7 +27,7 @@
 
         @if (User != null && User.Identity != null && User.Identity.IsAuthenticated && favoriteTools != null && favoriteTools.Any())
         {
-            <div class="tools-section mb-4">
+            <div class="tools-section mb-4" id="favorite-tools-section">
                 <h3 class="section-title">Your Favorite Tools</h3>
                 <hr class="section-divider" />
                 <div class="row" id="favorite-tools-container">

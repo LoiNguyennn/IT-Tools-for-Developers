@@ -1,0 +1,162 @@
+﻿@model ITTools.Core.Models.Tool
+
+<style>
+    .qr-code-container {
+        max-width: 300px;
+        margin: 20px auto;
+        text-align: center;
+        position: relative;
+    }
+
+    .qr-code-image {
+        max-width: 100%;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background: #fff;
+    }
+
+    /* Ẩn nút download ban đầu */
+    .download-btn {
+        display: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+    }
+
+        /* Định nghĩa style cho nút download khi hiển thị */
+        .download-btn.visible {
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .download-btn i {
+            margin-right: 5px;
+        }
+
+    /* Tạo khoảng trống giữa QR code và nút */
+    .spacer {
+        height: 1px;
+        display: none;
+    }
+
+        .spacer.visible {
+            display: block;
+        }
+</style>
+
+<div class="tool-details-card">
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+
+        <dt class="col-sm-3">Category</dt>
+        <dd class="col-sm-9">@Model.Category?.Name</dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">
+            @if (Model.IsEnabled)
+            {
+                <span class="badge badge-enabled">Enabled</span>
+            }
+            else
+            {
+                <span class="badge badge-disabled">Disabled</span>
+            }
+        </dd>
+
+        <dt class="col-sm-3">Type</dt>
+        <dd class="col-sm-9">
+            <span class="badge badge-executable">Executable</span>
+        </dd>
+    </dl>
+
+    <div class="try-it-out mt-4">
+        <h4>Try It Out</h4>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="toolInput" placeholder="Enter URL or text for QR code">
+            <button class="btn btn-primary" type="button" id="executeButton">Generate QR Code</button>
+        </div>
+        <div class="result-section mt-3">
+            <h5>Result:</h5>
+            <div id="qrCodeContainer" class="qr-code-container">
+                <div id="qrCodeImageContainer"></div>
+                <div id="spacer" class="spacer"></div>
+                <a id="downloadQrCode" href="#" class="btn btn-sm btn-success download-btn" download="qrcode.png">
+                    <i class="fas fa-download"></i> Download QR Code
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm Font Awesome để sử dụng icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        const $executeButton = $('#executeButton');
+        const $toolInput = $('#toolInput');
+        const $qrCodeImageContainer = $('#qrCodeImageContainer');
+        const $downloadQrCode = $('#downloadQrCode');
+        const $spacer = $('#spacer');
+
+        function executeTool() {
+            const input = $toolInput.val().trim();
+            if (!input) {
+                return; // Không hiển thị thông báo, chỉ thoát
+            }
+
+            // Reset UI
+            $executeButton.prop('disabled', true);
+            $downloadQrCode.removeClass('visible');
+            $spacer.removeClass('visible');
+            $qrCodeImageContainer.empty();
+
+            $.ajax({
+                url: '@Url.Action("Execute", "Tools")',
+                type: 'POST',
+                data: { toolName: '@Model.Name', input: input },
+                success: function(response) {
+                    console.log('Server response:', response);
+                    if (response && response.result) {
+                        let imageUrl = response.result; // Dùng trực tiếp vì đã có tiền tố
+                        if (!imageUrl.startsWith('data:image/png;base64,')) {
+                            console.warn('Invalid Base64 format, adding prefix');
+                            imageUrl = `data:image/png;base64,${imageUrl}`;
+                        }
+
+                        try {
+                            const img = $('<img>')
+                                .attr('src', imageUrl)
+                                .attr('alt', 'QR Code')
+                                .addClass('qr-code-image');
+                            $qrCodeImageContainer.html(img);
+
+                            // Hiển thị spacer và nút download với class visible
+                            $spacer.addClass('visible');
+                            $downloadQrCode.attr('href', imageUrl).addClass('visible');
+                        } catch (e) {
+                            console.error('Error rendering image:', e);
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    console.error('AJAX error:', xhr);
+                },
+                complete: function() {
+                    $executeButton.prop('disabled', false);
+                }
+            });
+        }
+
+        $executeButton.click(executeTool);
+        $toolInput.on('keypress', function(e) {
+            if (e.which === 13) {
+                executeTool();
+            }
+        });
+    });
+</script>
