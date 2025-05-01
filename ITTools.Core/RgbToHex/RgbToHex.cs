@@ -5,7 +5,7 @@ namespace ColorTools
 {
     public class RgbToHex : ITool
     {
-        public string Name => "RGB to Hex Converter";
+        public string Name => "RGB to Hex";
 
         public string Description =>
             "Converts an RGB color value (e.g., 'rgb(255, 100, 50)' or '255, 100, 50') into a hexadecimal color code.";

@@ -2,6 +2,7 @@
 using ITTools.Data;
 using ITTools.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +30,12 @@ builder.Services.AddAuthentication()
         options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
     });
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                              ForwardedHeaders.XForwardedProto;
+});
+
 // Register ToolService
 builder.Services.AddSingleton<ToolService>(); // Changed from AddScoped to AddSingleton
 builder.Services.AddControllersWithViews();
@@ -52,11 +59,12 @@ async Task SeedRolesAndAdmin(IServiceProvider serviceProvider)
 
     var adminUser = new ApplicationUser
     {
-        UserName = "admin@ittools.com",
-        Email = "admin@ittools.com",
+        UserName = builder.Configuration["AdminUser:Email"],
+        Email = builder.Configuration["AdminUser:Email"],
         IsPremium = true
     };
-    string adminPassword = "Admin@123";
+    string adminPassword = builder.Configuration["AdminUser:Password"];
+
     var user = await userManager.FindByEmailAsync(adminUser.Email);
     if (user == null)
     {
@@ -74,6 +82,8 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     await SeedRolesAndAdmin(services);
 }
+
+app.UseForwardedHeaders();
 
 // Configure the HTTP request pipeline
 app.UseHttpsRedirection();

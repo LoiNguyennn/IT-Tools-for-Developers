@@ -66,8 +66,10 @@ namespace ITTools.Controllers
         [HttpGet]
         public IActionResult LoginWithGoogle()
         {
-            var redirectUrl = Url.Action("GoogleResponse", "Account");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(
+                GoogleDefaults.AuthenticationScheme,
+                Url.Action("GoogleResponse", "Account", null, Request.Scheme));
+
             return new ChallengeResult(GoogleDefaults.AuthenticationScheme, properties);
         }
 
