@@ -59,6 +59,7 @@ namespace ITTools.Core.Controllers
 
                 ViewBag.FavoriteTools = favoriteTools;
                 ViewBag.OtherTools = otherTools;
+                ViewBag.IsInFavoriteTools = myTools;
             }
             else
             {

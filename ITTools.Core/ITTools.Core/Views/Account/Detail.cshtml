@@ -56,20 +56,19 @@
                                 <p class="text-muted mb-0">@(User.IsInRole("Admin") ? "Admin" : "User")</p>
                             </div>
                         </div>
-                        @if (!User.IsInRole("Admin"))
-                        {
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-5">
-                                    <p class="mb-0">Membership</p>
-                                </div>
-                                <div class="col-sm-7">
-                                    <p class="text-muted mb-0">@(Model.IsPremium ? "Premium" : "Free")</p>
-                                </div>
+                        
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <p class="mb-0">Membership</p>
                             </div>
-                        }
+                            <div class="col-sm-7">
+                                <p class="text-muted mb-0">@(Model.IsPremium ? "Premium" : "Free")</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card mb-4 mb-md-0">
@@ -82,12 +81,12 @@
                                 @if (Model.FavoriteTools.Count > 0)
                                 {
                                     var idx = 0;
-                                
+
                                     @foreach (var tool in Model.FavoriteTools)
                                     {
                                         var marginClass = idx > 0 ? "mt-4" : "";
-                                        idx++;  
-                                    
+                                        idx++;
+
                                         <div class="@marginClass d-flex flex-row align-items-center justify-content-between">
                                             <p class="mb-1" style="font-size: .88rem;">
                                                 <a class="text-decoration-none" href="/Tools/Details/@tool.Id">@tool.Name</a> &#183;
@@ -95,7 +94,7 @@
                                                 @if (tool.IsPremium)
                                                 {
                                                     <i class="fa-solid fa-crown ms-1" title="Premium Tool" style="color: #ffde21;"></i>
-                                                } 
+                                                }
                                             </p>
                                             <a
                                                 class="remove-favorite fw-light text-decoration-none"
@@ -105,6 +104,7 @@
                                             </a>
                                         </div>
                                     }
+
                                     <div class="text-center mt-4">
                                         <a href="/Tools?myTools=true" class="text-decoration-none small">View All &darr;</a>
                                     </div>

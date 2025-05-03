@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var favoriteTools = ViewBag.FavoriteTools as List<ITTools.Core.Models.Tool>;
     var otherTools = ViewBag.OtherTools as List<ITTools.Core.Models.Tool>;
+    var isInFavoriteTools = ViewBag.IsInFavoriteTools;
 }
 <link rel="stylesheet" href="~/css/tools.css" />
 <link rel="stylesheet" href="~/css/tool_card.css" />
@@ -41,21 +42,24 @@
             </div>
         }
 
-        <div class="tools-section">
-            <h3 class="section-title">Tools</h3>
-            <hr class="section-divider" />
-            <div class="row" id="tools-container">
-                @if (otherTools != null)
-                {
-                    @foreach (var tool in otherTools)
+        @if (!isInFavoriteTools)
+        {
+            <div class="tools-section">
+                <h3 class="section-title">Tools</h3>
+                <hr class="section-divider" />
+                <div class="row" id="tools-container">
+                    @if (otherTools != null)
                     {
-                        <div class="col-md-4 mb-4">
-                            <partial name="_ToolCardPartial" model="tool" />
-                        </div>
+                        @foreach (var tool in otherTools)
+                        {
+                            <div class="col-md-4 mb-4">
+                                <partial name="_ToolCardPartial" model="tool" />
+                            </div>
+                        }
                     }
-                }
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 @section Scripts {
