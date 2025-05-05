@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITTools.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250407100738_AddCreatedAtToFavorite")]
-    partial class AddCreatedAtToFavorite
+    [Migration("20250504110701_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

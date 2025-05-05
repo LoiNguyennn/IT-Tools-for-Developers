@@ -26,13 +26,17 @@
                     var userId = UserManager.GetUserId(User);
                     var isFavorited = Model.Favorites.Any(f => f.UserId == userId);
                 }
-                <div class="favorite-icon-container" data-tool-id="@Model.Id">
-                    <i class="@(isFavorited ? "fa-solid" : "fa-regular") fa-heart favorite-toggle" style="color: #d1001f;" data-toggle="tooltip" title="@(isFavorited ? "Unfavorite" : "Add to favorites")"></i>
-                </div>
+                
                 @if (User.IsInRole("Admin"))
                 {
                     <div class="edit-icon-container" data-tool-id="@Model.Id" data-edit-url="@Url.Action("EditTool", "Admin", new { id = Model.Id })" data-toggle="tooltip" data-placement="top" title="Edit Tool">
                         <i class="fas fa-edit edit-icon"></i>
+                    </div>
+                }
+                else
+                {
+                    <div class="favorite-icon-container" data-tool-id="@Model.Id">
+                        <i class="@(isFavorited ? "fa-solid" : "fa-regular") fa-heart favorite-toggle" style="color: #d1001f;" data-toggle="tooltip" title="@(isFavorited ? "Unfavorite" : "Add to favorites")"></i>
                     </div>
                 }
             </div>
