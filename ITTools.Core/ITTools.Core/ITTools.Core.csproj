@@ -32,10 +32,4 @@
     <None Remove="Plugins\EncodingTools.dll" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="ITTools.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

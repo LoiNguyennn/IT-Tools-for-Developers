@@ -10,7 +10,7 @@ namespace Utility
 {
     public class UrlEncoder : ITool
     {
-        public string Name => "URL Encoder";
+        public string Name => "Url Encoder";
         public string Description => "Encodes a URL string";
         public string Category => "Utility Tools";
         public string Execute(string input)
