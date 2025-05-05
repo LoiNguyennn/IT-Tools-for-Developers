@@ -30,7 +30,7 @@ COPY --from=publish /app/publish .
 RUN mkdir -p /app/data /app/Plugins
 COPY --chown=$APP_UID:$APP_UID ITTools.db /app/data/  
 # Set permissions for directories and file
-RUN chmod -R 777 /app/data /app/Plugins
+RUN chmod -R 777 /app/data /app/Plugins /app/wwwroot/assets
 RUN chmod 666 /app/data/ITTools.db || true  
 
 # Switch to non-root user
@@ -39,8 +39,8 @@ USER $APP_UID
 # Environment variables
 ENV ASPNETCORE_URLS=http://+:80
 ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/ITTools.db"
-ENV Authentication__Google__ClientId=""
-ENV Authentication__Google__ClientSecret=""
+ENV Authentication__Google__ClientId="720860860736-abf7igp5tl91rbh91lqeps6pn15aq9p3.apps.googleusercontent.com"
+ENV Authentication__Google__ClientSecret="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"
 
 
 # Entry point

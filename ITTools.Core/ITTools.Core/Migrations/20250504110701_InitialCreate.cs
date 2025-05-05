@@ -198,7 +198,8 @@ namespace ITTools.Core.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    ToolId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ToolId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
