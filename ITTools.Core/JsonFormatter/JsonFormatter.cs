@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace FileFormat
 {
-    public class JsonFormatter : ITool
+    public class JSONFormatter : ITool
     {
         public string Name => "JSON Formatter";
         public string Description => "Formats a JSON string with proper indentation";

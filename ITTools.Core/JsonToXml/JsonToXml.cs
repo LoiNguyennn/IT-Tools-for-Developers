@@ -4,9 +4,9 @@ using Newtonsoft.Json.Linq;
 
 namespace ConversionTools
 {
-    public class JsonToXml : ITool
+    public class JSONToXML : ITool
     {
-        public string Name => "JSON to XML";
+        public string Name => "JSON To XML";
         public string Description => "Converts JSON to XML format";
         public string Category => "Conversion Tools";
 
