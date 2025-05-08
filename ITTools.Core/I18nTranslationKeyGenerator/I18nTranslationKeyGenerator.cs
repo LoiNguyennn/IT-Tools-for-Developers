@@ -6,7 +6,7 @@ namespace StringUtilities
 {
     public class I18NTranslationKeyGenerator : ITool
     {
-        public string Name => "I18n Translation Key Generator";
+        public string Name => "I18N Translation Key Generator";
 
         public string Description => "Converts a UI string into a translation key, e.g., 'Create Account' → 'auth.create_account'.";
 

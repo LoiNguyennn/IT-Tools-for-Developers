@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace FileFormat
 {
-    public class XmlFormatter : ITool
+    public class XMLFormatter : ITool
     {
         public string Name => "XML Formatter";
         public string Description => "Formats an XML string with proper structure";

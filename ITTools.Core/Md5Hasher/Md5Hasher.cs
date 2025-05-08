@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EncodingTools
 {
-    public class Md5Hasher : ITool
+    public class MD5Hasher : ITool
     {
         public string Name => "MD5 Hasher";
         public string Description => "Generates an MD5 hash of the input";

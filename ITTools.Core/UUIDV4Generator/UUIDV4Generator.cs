@@ -5,7 +5,7 @@ namespace TokenGenerators
 {
     public class UUIDV4Generator : ITool
     {
-        public string Name => "UUID v4 Generator";
+        public string Name => "UUID V4 Generator";
         public string Description => "Generates a random UUID version 4";
         public string Category => "Token Generation Tools";
 

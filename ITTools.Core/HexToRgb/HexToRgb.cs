@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace ITTools.Core.Tools
 {
-    public class HexToRgbConverter : ITool
+    public class HexToRGB : ITool
     {
-        public string Name => "Hex to RGB Converter";
+        public string Name => "Hex To RGB";
 
         public string Description =>
             "Converts a hexadecimal color code (e.g., '#FF5733' or 'FF5733') to an RGB value.";

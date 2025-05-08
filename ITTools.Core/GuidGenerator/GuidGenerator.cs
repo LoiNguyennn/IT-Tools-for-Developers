@@ -2,7 +2,7 @@
 
 namespace TokenGenerators
 {
-    public class GuidGenerator : ITool
+    public class GUIDGenerator : ITool
     {
         public string Name => "GUID Generator";
         public string Description => "Generates a unique identifier (GUID)";

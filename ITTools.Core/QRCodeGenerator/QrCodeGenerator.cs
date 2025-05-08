@@ -5,8 +5,8 @@ namespace ImageVideoTools
 {
     public class QrCodeGenerator : ITool
     {
-        public string Name => "QR Code Generator";
-        public string Description => "Generates a QR code from text (e.g., as Base64)";
+        public string Name => "Qr Code Generator";
+        public string Description => "Generates a Qr code from text (e.g., as Base64)";
         public string Category => "Image/Video Tools";
 
         public string Execute(string input)

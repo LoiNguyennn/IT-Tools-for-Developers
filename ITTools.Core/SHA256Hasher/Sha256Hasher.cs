@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace EncodingTools
 {
-    public class Sha256Hasher : ITool
+    public class SHA256Hasher : ITool
     {
         public string Name => "SHA256 Hasher";
         public string Description => "Generates a SHA256 hash of the input";

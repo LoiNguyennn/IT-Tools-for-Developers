@@ -2,7 +2,7 @@
 
 namespace FileFormat
 {
-    public class CsvRowCounter : ITool
+    public class CSVRowCounter : ITool
     {
         public string Name => "CSV Row Counter";
         public string Description => "Counts rows in a CSV string";

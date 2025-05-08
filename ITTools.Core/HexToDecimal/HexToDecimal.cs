@@ -6,7 +6,7 @@ namespace ConversionTools
 {
     public class HexToDecimal : ITool
     {
-        public string Name => "Hex to Decimal";
+        public string Name => "Hex To Decimal";
         public string Description => "Converts hexadecimal string to decimal";
         public string Category => "Conversion Tools";
 

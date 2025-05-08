@@ -32,4 +32,8 @@
     <None Remove="Plugins\EncodingTools.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Plugins\" />
+  </ItemGroup>
+
 </Project>

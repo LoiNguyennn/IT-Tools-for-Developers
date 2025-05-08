@@ -3,7 +3,7 @@ using Figgle;
 
 namespace ImageVideoTools
 {
-    public class AsciiArtGenerator : ITool
+    public class ASCIIArtGenerator : ITool
     {
         public string Name => "ASCII Art Generator";
         public string Description => "Creates simple ASCII art from text input";
